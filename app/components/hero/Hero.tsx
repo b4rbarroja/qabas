@@ -230,107 +230,121 @@ export default function Hero() {
               <article
                 key={post.id}
                 className="
-                  group flex h-full flex-col overflow-hidden
-                  rounded-2xl
-                  border border-primary/10
-                  bg-transparent
-                  transition-all duration-300
-                  hover:-translate-y-1
-                  hover:border-primary/30
-                  hover:shadow-xl
-                "
+      group flex h-full flex-col overflow-hidden
+      rounded-2xl
+      bg-background
+      border border-primary/10
+      shadow-sm
+      transition-all duration-300
+      hover:-translate-y-1
+      hover:shadow-xl
+    "
               >
                 {/* Image */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/5 p-2.5 sm:p-3">
-                  <div className="relative h-full w-full overflow-hidden rounded-xl">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      sizes="
-                        (max-width: 640px) 100vw,
-                        (max-width: 1024px) 50vw,
-                        33vw
-                      "
-                      className="
-                        object-cover
-                        transition-transform duration-500
-                        ease-out
-                        group-hover:scale-105
-                      "
-                    />
-                  </div>
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    sizes="
+          (max-width: 640px) 100vw,
+          (max-width: 1024px) 50vw,
+          33vw
+        "
+                    className="
+          object-cover
+          transition-transform duration-500
+          ease-out
+          group-hover:scale-105
+        "
+                  />
+
+                  {/* Category Badge */}
+                  <span
+                    className="
+          absolute bottom-2.5 right-2.5
+          rounded-md
+          bg-primary/90
+          px-3 py-1.5
+          text-xs font-medium
+          text-primary-foreground
+          backdrop-blur-sm
+          sm:text-sm
+        "
+                  >
+                    {post.category}
+                  </span>
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col">
-                  <div className="p-5 sm:p-6">
-                    {/* Meta */}
-                    <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-primary/60 sm:text-sm">
-                      <span className="font-semibold text-accent">
-                        {post.category}
-                      </span>
-
-                      <span>•</span>
-
-                      <span>{post.readTime}</span>
-                    </div>
-
-                    {/* Title */}
-                    <h3
-                      className="
-                        mb-3
-                        text-xl font-bold leading-snug text-primary
-                        sm:text-2xl
-                      "
-                    >
-                      <Link
-                        href={post.slug}
-                        className="
-                          transition-colors
-                          hover:text-accent
-                          focus:outline-none
-                        "
-                      >
-                        {post.title}
-                      </Link>
-                    </h3>
-
-                    {/* Excerpt */}
-                    <p
-                      className="
-                        line-clamp-3
-                        text-sm leading-[1.9]
-                        text-primary/70
-                        sm:text-base md:text-lg
-                      "
-                    >
-                      {post.excerpt}
-                    </p>
-                  </div>
-
-                  {/* Footer */}
+                <div className="flex flex-1 flex-col px-4 pb-5 pt-4 sm:px-5 sm:pb-6">
+                  {/* Meta */}
                   <div
                     className="
-                      mt-auto flex items-center justify-between
-                      gap-4
-                      px-5 pb-5
-                      text-xs text-primary/50
-                      sm:px-6 sm:pb-6 sm:text-sm
-                    "
+          mb-2.5 flex items-center justify-between
+          gap-3
+          text-xs font-medium
+          text-primary/50
+          sm:text-sm
+        "
                   >
                     <span>{post.date}</span>
 
+                    <span className="flex items-center gap-1.5">
+                      {post.readTime}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3
+                    className="
+          mb-2.5
+          text-lg font-bold leading-snug
+          text-primary
+          sm:text-xl
+        "
+                  >
                     <Link
                       href={post.slug}
                       className="
-                        flex shrink-0 items-center gap-1.5
-                        font-semibold text-primary
-                        transition-colors
-                        hover:text-accent
-                      "
+            transition-colors
+            hover:text-accent
+            focus:outline-none
+          "
                     >
-                      اقرأ المقال
+                      {post.title}
+                    </Link>
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p
+                    className="
+          line-clamp-3
+          text-sm leading-[1.9]
+          text-primary/70
+          sm:text-base
+        "
+                  >
+                    {post.excerpt}
+                  </p>
+
+                  {/* Read More */}
+                  <div className="mt-auto pt-4">
+                    <Link
+                      href={post.slug}
+                      className="
+      inline-flex items-center justify-center
+      self-start
+      rounded-md
+      bg-primary
+      px-5 py-2.5
+      text-sm font-semibold
+      text-light
+      transition-all duration-200
+      hover:bg-accent
+    "
+                    >
+                      أكمل القراءة «
                     </Link>
                   </div>
                 </div>
