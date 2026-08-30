@@ -329,7 +329,7 @@ export default function Hero() {
                   </p>
 
                   {/* Read More */}
-                  <div className="mt-auto pt-4">
+                  <div className="flex justify-end items-center">
                     <Link
                       href={post.slug}
                       className="
