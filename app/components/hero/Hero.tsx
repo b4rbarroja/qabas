@@ -69,7 +69,7 @@ export default function Hero() {
           {/* =========================
               TEXT
           ========================== */}
-          <div className="order-1 w-full max-w-2xl text-center lg:text-right">
+          <div className="order-1 pt-25 w-full max-w-2xl text-center lg:text-right">
             <h1
               className="
                 font-bold text-white
