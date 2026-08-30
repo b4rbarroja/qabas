@@ -1,85 +1,241 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navLinks = [
-  { href: "#", label: "الرئيسية" },
-  { href: "#", label: "التدوينات" },
-  { href: "#", label: "من نحن" },
-  { href: "#", label: "سجل معنا", isPrimary: true },
+  { href: "/", label: "الرئيسية" },
+  { href: "/posts", label: "التدوينات" },
+  { href: "/about", label: "من نحن" },
+  { href: "/register", label: "سجل معنا", isPrimary: true },
 ];
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  /* منع Scroll الصفحة أثناء فتح القائمة */
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
+  /* إغلاق القائمة عند الضغط على Escape */
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    };
+
+    if (isMenuOpen) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMenuOpen]);
 
   return (
     <header
+      dir="rtl"
       className="
         relative z-[100]
-        flex h-[66px] min-h-[66px]
+        flex h-[68px] min-h-[68px]
         items-center justify-between
         bg-background
-        px-5 py-4
-        font-thamaniyah
-        sm:px-8
-        md:px-12
+        px-4
+        sm:px-6
+        md:px-10
         lg:px-16
         xl:px-24
+        2xl:px-32
+        font-thamaniyah
       "
     >
-      {/* Logo */}
-      <div
+      {/* =====================================================
+          LOGO
+      ====================================================== */}
+
+      <Link
+        href="/"
+        onClick={closeMenu}
+        aria-label="الصفحة الرئيسية"
         className="
-          absolute left-1/2 top-1/2
-          z-10
-          -translate-x-1/2 -translate-y-1/2
-          md:static
-          md:translate-x-0
-          md:translate-y-0
+          relative z-[110]
+          flex
+          h-[58px] w-[58px]
+          sm:h-[62px] sm:w-[62px]
+          md:h-[66px] md:w-[66px]
+          shrink-0
+          items-center justify-center
         "
       >
+        {/* Light Logo */}
         <Image
           src="/qabaLogo.png"
-          height={70}
           width={70}
+          height={70}
           alt="قبس"
-          className="h-auto w-[58px] sm:w-[65px] md:w-[70px]"
           priority
+          className="
+            logo-light
+            h-auto
+            w-[55px]
+            sm:w-[60px]
+            md:w-[65px]
+            object-contain
+          "
         />
-      </div>
 
-      {/* Burger */}
+        {/* Dark Logo */}
+        <Image
+          src="/qabasLight.png"
+          width={70}
+          height={70}
+          alt="قبس"
+          priority
+          className="
+            logo-dark
+            h-auto
+            w-[55px]
+            sm:w-[60px]
+            md:w-[65px]
+            object-contain
+          "
+        />
+      </Link>
+
+      {/* =====================================================
+          DESKTOP NAVIGATION
+      ====================================================== */}
+
+      <nav
+        aria-label="التنقل الرئيسي"
+        className="
+          hidden
+          md:flex
+          items-center
+          gap-5
+          lg:gap-7
+          xl:gap-9
+          text-dark
+        "
+      >
+        {navLinks.map((link) => (
+          <Link
+            key={link.label}
+            href={link.href}
+            className={
+              link.isPrimary
+                ? `
+                  rounded-lg
+                  bg-primary
+                  px-5
+                  py-2.5
+                  lg:px-6
+                  lg:py-3
+                  text-sm
+                  lg:text-base
+                  text-light
+                  shadow-sm
+                  transition-all
+                  duration-200
+                  hover:-translate-y-0.5
+                  hover:brightness-110
+                `
+                : `
+                  relative
+                  py-2
+                  text-sm
+                  lg:text-base
+                  transition-colors
+                  duration-200
+                  hover:text-accent
+                  after:absolute
+                  after:bottom-0
+                  after:right-0
+                  after:h-[1px]
+                  after:w-0
+                  after:bg-accent
+                  after:transition-all
+                  after:duration-300
+                  hover:after:w-full
+                `
+            }
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* =====================================================
+          MOBILE BURGER
+      ====================================================== */}
+
       <button
         type="button"
         onClick={toggleMenu}
         className="
           relative z-[110]
-          flex items-center justify-center
-          rounded-lg
-          p-2
+          flex
+          h-11 w-11
+          sm:h-12 sm:w-12
+          items-center
+          justify-center
+          rounded-xl
           text-dark
-          transition-colors
+          transition-all
+          duration-200
+          hover:bg-primary/5
           hover:text-accent
+          active:scale-95
           md:hidden
         "
         aria-label={isMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
         aria-expanded={isMenuOpen}
+        aria-controls="mobile-navigation"
       >
         <AnimatePresence mode="wait" initial={false}>
           {isMenuOpen ? (
             <motion.svg
               key="close"
-              initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-              transition={{ duration: 0.2 }}
-              className="h-7 w-7"
+              initial={{
+                opacity: 0,
+                rotate: -90,
+                scale: 0.7,
+              }}
+              animate={{
+                opacity: 1,
+                rotate: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                rotate: 90,
+                scale: 0.7,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
+              className="h-7 w-7 sm:h-8 sm:w-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -94,11 +250,25 @@ export default function Navbar() {
           ) : (
             <motion.svg
               key="menu"
-              initial={{ opacity: 0, rotate: 90, scale: 0.7 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: -90, scale: 0.7 }}
-              transition={{ duration: 0.2 }}
-              className="h-7 w-7"
+              initial={{
+                opacity: 0,
+                rotate: 90,
+                scale: 0.7,
+              }}
+              animate={{
+                opacity: 1,
+                rotate: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                rotate: -90,
+                scale: 0.7,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
+              className="h-7 w-7 sm:h-8 sm:w-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -114,33 +284,20 @@ export default function Navbar() {
         </AnimatePresence>
       </button>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden items-center gap-6 text-dark md:flex">
-        {navLinks.map((link, index) => (
-          <Link
-            key={index}
-            href={link.href}
-            className={
-              link.isPrimary
-                ? "rounded-[5px] bg-primary px-5 py-2 text-light transition-all duration-200 hover:brightness-125"
-                : "transition-colors duration-200 hover:text-accent"
-            }
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
-
       {/* =====================================================
           MOBILE MENU
       ====================================================== */}
+
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
+            id="mobile-navigation"
             className="
-              fixed inset-0
+              fixed
+              inset-0
               z-[100]
               flex
+              min-h-[100dvh]
               items-center
               justify-center
               overflow-hidden
@@ -148,18 +305,25 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{
+              duration: 0.25,
+              ease: "easeOut",
+            }}
             onClick={closeMenu}
             role="dialog"
             aria-modal="true"
             aria-label="قائمة التنقل"
           >
-            {/* Blur Background */}
+            {/* =================================================
+                BLUR BACKGROUND
+            ================================================== */}
+
             <motion.div
               className="
-                absolute inset-0
-                bg-background/75
-                backdrop-blur-xl
+                absolute
+                inset-0
+                bg-background/80
+                backdrop-blur-2xl
               "
               initial={{
                 opacity: 0,
@@ -167,53 +331,61 @@ export default function Navbar() {
               }}
               animate={{
                 opacity: 1,
-                backdropFilter: "blur(20px)",
+                backdropFilter: "blur(24px)",
               }}
               exit={{
                 opacity: 0,
                 backdropFilter: "blur(0px)",
               }}
               transition={{
-                duration: 0.4,
-                ease: "easeOut",
+                duration: 0.35,
               }}
             />
 
-            {/* Soft overlay */}
+            {/* لون خفيف فوق الـ Blur */}
             <motion.div
-              className="absolute inset-0 bg-primary/[0.03]"
+              className="
+                absolute
+                inset-0
+                bg-primary/[0.04]
+              "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
 
-            {/* Menu Content */}
+            {/* =================================================
+                MENU CONTENT
+            ================================================== */}
+
             <motion.div
               className="
                 relative
                 z-10
                 flex
                 w-full
+                max-w-[420px]
                 flex-col
                 items-center
-                px-6
+                px-5
+                sm:px-8
               "
               initial={{
                 opacity: 0,
-                scale: 0.94,
-                y: 20,
+                y: 25,
+                scale: 0.96,
                 filter: "blur(10px)",
               }}
               animate={{
                 opacity: 1,
-                scale: 1,
                 y: 0,
+                scale: 1,
                 filter: "blur(0px)",
               }}
               exit={{
                 opacity: 0,
-                scale: 0.96,
                 y: 15,
+                scale: 0.97,
                 filter: "blur(8px)",
               }}
               transition={{
@@ -222,34 +394,83 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Mobile Logo */}
+              {/* =================================================
+                  MOBILE LOGO
+              ================================================== */}
+
               <motion.div
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{
+                  opacity: 0,
+                  y: -15,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
                 transition={{
-                  delay: 0.08,
+                  delay: 0.05,
                   duration: 0.35,
                 }}
-                className="mb-10"
+                className="
+                  mb-8
+                  sm:mb-10
+                "
               >
-                <Image
-                  src="/qabaLogo.png"
-                  width={90}
-                  height={90}
-                  alt="قبس"
-                  className="h-auto w-[75px]"
-                />
+                <div className="relative flex h-20 w-20 items-center justify-center">
+                  {/* Light */}
+                  <Image
+                    src="/qabaLogo.png"
+                    width={90}
+                    height={90}
+                    alt="قبس"
+                    className="
+                      logo-light
+                      h-auto
+                      w-[75px]
+                      sm:w-[85px]
+                      object-contain
+                    "
+                  />
+
+                  {/* Dark */}
+                  <Image
+                    src="/qabasLight.png"
+                    width={90}
+                    height={90}
+                    alt="قبس"
+                    className="
+                      logo-dark
+                      h-auto
+                      w-[75px]
+                      sm:w-[85px]
+                      object-contain
+                    "
+                  />
+                </div>
               </motion.div>
 
-              {/* Links */}
-              <nav className="flex w-full max-w-sm flex-col items-center gap-3">
+              {/* =================================================
+                  LINKS
+              ================================================== */}
+
+              <nav
+                aria-label="قائمة الهاتف"
+                className="
+                  flex
+                  w-full
+                  flex-col
+                  items-center
+                  gap-2.5
+                  sm:gap-3
+                "
+              >
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.label}
                     className="w-full"
                     initial={{
                       opacity: 0,
-                      y: 20,
+                      y: 18,
                       filter: "blur(6px)",
                     }}
                     animate={{
@@ -263,7 +484,7 @@ export default function Navbar() {
                       filter: "blur(5px)",
                     }}
                     transition={{
-                      delay: 0.12 + index * 0.07,
+                      delay: 0.1 + index * 0.06,
                       duration: 0.35,
                       ease: "easeOut",
                     }}
@@ -274,28 +495,44 @@ export default function Navbar() {
                       className={
                         link.isPrimary
                           ? `
-                            flex w-full
-                            items-center justify-center
+                            flex
+                            w-full
+                            items-center
+                            justify-center
                             rounded-xl
                             bg-primary
-                            px-8 py-4
-                            text-lg font-medium
+                            px-6
+                            py-3.5
+                            sm:py-4
+                            text-base
+                            sm:text-lg
+                            font-medium
                             text-light
                             shadow-lg
-                            transition-all duration-300
+                            transition-all
+                            duration-300
                             hover:-translate-y-0.5
-                            hover:brightness-125
+                            hover:brightness-110
+                            active:scale-[0.98]
                           `
                           : `
-                            flex w-full
-                            items-center justify-center
+                            flex
+                            w-full
+                            items-center
+                            justify-center
                             rounded-xl
-                            px-8 py-4
-                            text-xl font-medium
+                            px-6
+                            py-3.5
+                            sm:py-4
+                            text-lg
+                            sm:text-xl
+                            font-medium
                             text-dark
-                            transition-all duration-300
+                            transition-all
+                            duration-300
                             hover:bg-primary/5
                             hover:text-accent
+                            active:scale-[0.98]
                           `
                       }
                     >
@@ -306,21 +543,35 @@ export default function Navbar() {
               </nav>
             </motion.div>
 
-            {/* Close Button */}
+            {/* =================================================
+                CLOSE BUTTON
+            ================================================== */}
+
             <motion.button
               type="button"
               onClick={closeMenu}
               aria-label="إغلاق القائمة"
               className="
                 absolute
-                left-5 top-5
-                z-20
+                left-4
+                top-4
+                sm:left-7
+                sm:top-7
+                z-[120]
+                flex
+                h-11
+                w-11
+                sm:h-12
+                sm:w-12
+                items-center
+                justify-center
                 rounded-full
-                p-2
                 text-dark
-                transition-colors
+                transition-all
+                duration-200
+                hover:bg-primary/5
                 hover:text-accent
-                sm:left-8 sm:top-8
+                active:scale-95
               "
               initial={{
                 opacity: 0,
@@ -338,12 +589,12 @@ export default function Navbar() {
                 rotate: 45,
               }}
               transition={{
-                delay: 0.15,
+                delay: 0.1,
                 duration: 0.3,
               }}
             >
               <svg
-                className="h-8 w-8"
+                className="h-7 w-7 sm:h-8 sm:w-8"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

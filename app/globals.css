@@ -1,12 +1,21 @@
 @import "tailwindcss";
 
+/* =========================================================
+   LIGHT MODE
+   ========================================================= */
+
 :root {
   --background: #f7f4eb;
   --primary: #1e4331;
   --accent: #c88d53;
-  --darkText: #222222;
+
+  --darkText: #243229;
   --lightText: #ffffff;
 }
+
+/* =========================================================
+   TAILWIND THEME
+   ========================================================= */
 
 @theme inline {
   --color-background: var(--background);
@@ -14,15 +23,196 @@
   --color-accent: var(--accent);
   --color-dark: var(--darkText);
   --color-light: var(--lightText);
+
   --font-thamaniyah: var(--font-thamaniyah);
 }
 
-@media (prefers-color-scheme: light) {
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
   :root {
-    --background: #121815;
-    --primary: #2d5f47;
-    --accent: #d99f65;
-    --darkText: #f7f4eb;
+    /* خلفية خضراء داكنة */
+    --background: #0f2118;
+
+    /* الأخضر الأساسي */
+    --primary: #1e4331;
+
+    /* ذهبي دافئ */
+    --accent: #d6a06b;
+
+    /* النصوص */
+    --darkText: #f5f1e8;
     --lightText: #ffffff;
+  }
+}
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--darkText);
+}
+
+/* =========================================================
+   DARK MODE TEXT FIX
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  /* العناوين */
+  .text-primary {
+    color: #f5f1e8 !important;
+  }
+
+  /* النصوص الثانوية */
+  .text-primary\/90 {
+    color: rgb(245 241 232 / 0.9) !important;
+  }
+
+  .text-primary\/80 {
+    color: rgb(245 241 232 / 0.8) !important;
+  }
+
+  .text-primary\/70 {
+    color: rgb(245 241 232 / 0.7) !important;
+  }
+
+  .text-primary\/60 {
+    color: rgb(245 241 232 / 0.6) !important;
+  }
+
+  .text-primary\/50 {
+    color: rgb(245 241 232 / 0.5) !important;
+  }
+
+  .text-primary\/40 {
+    color: rgb(245 241 232 / 0.4) !important;
+  }
+
+  .text-primary\/30 {
+    color: rgb(245 241 232 / 0.3) !important;
+  }
+
+  /* =====================================================
+     BORDERS
+     ===================================================== */
+
+  .border-primary\/10 {
+    border-color: rgb(245 241 232 / 0.1) !important;
+  }
+
+  .border-primary\/20 {
+    border-color: rgb(245 241 232 / 0.2) !important;
+  }
+
+  .border-primary\/30 {
+    border-color: rgb(245 241 232 / 0.3) !important;
+  }
+
+  /* =====================================================
+     LIGHT PRIMARY BACKGROUNDS
+     ===================================================== */
+
+  .bg-primary\/5 {
+    background-color: rgb(245 241 232 / 0.05) !important;
+  }
+
+  .bg-primary\/10 {
+    background-color: rgb(245 241 232 / 0.1) !important;
+  }
+
+  .bg-primary\/20 {
+    background-color: rgb(245 241 232 / 0.2) !important;
+  }
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 0.5;
+}
+
+/* =========================================================
+   DARK MODE FOR INPUTS
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  input,
+  textarea {
+    color: #f5f1e8;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(245 241 232 / 0.45);
+  }
+}
+.logo-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-light {
+    display: none;
+  }
+
+  .logo-dark {
+    display: block;
   }
 }
