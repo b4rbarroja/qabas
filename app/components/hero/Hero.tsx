@@ -267,7 +267,7 @@ export default function Hero() {
           bg-primary/90
           px-3 py-1.5
           text-xs font-medium
-          text-primary-foreground
+          text-light
           backdrop-blur-sm
           sm:text-sm
         "
