@@ -35,19 +35,9 @@ export default function AboutPage() {
   return (
     <div className="font-thamaniyah">
       {/* Hero Section */}
-      <section className="bg-primary px-50 min-h-[420px] flex justify-between items-center flex-col-reverse md:flex-row py-12 gap-8">
-        <div className="flex justify-center items-center">
-          <Image
-            src="/qabaFull.png"
-            className="rounded-2xl object-cover shadow-lg"
-            alt="عن قبس"
-            height={400}
-            width={450}
-            priority
-          />
-        </div>
-
-        <div className="w-full md:w-[550px] text-light">
+      <section className="bg-primary px-6 md:px-50 min-h-[420px] flex justify-between items-center flex-col md:flex-row py-12 gap-8">
+        {/* Text first on mobile */}
+        <div className="w-full md:w-full max-w-[550px] text-light order-1 md:order-2">
           <h1 className="text-4xl lg:text-5xl font-bold pb-6 leading-tight">
             من نحن؟
           </h1>
@@ -67,11 +57,23 @@ export default function AboutPage() {
             </Link>
             <Link
               href="#"
-              className="bg-accent/20 text-light hover:brightness-110 transition-all rounded-[6px] px-5 py-2.5 shadow-sm"
+              className="bg-accent/20 border-accent border text-light hover:brightness-110 transition-all rounded-[6px] px-5 py-2.5 shadow-sm"
             >
               انضم للمجتمع
             </Link>
           </div>
+        </div>
+
+        {/* Image second on mobile */}
+        <div className="flex justify-center items-center order-2 md:order-1 w-full">
+          <Image
+            src="/qabaFull.png"
+            className="rounded-2xl object-cover shadow-lg max-w-[90%] md:max-w-full"
+            alt="عن قبس"
+            height={400}
+            width={450}
+            priority
+          />
         </div>
       </section>
 

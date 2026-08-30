@@ -59,50 +59,42 @@ export default function Hero() {
         <div className="absolute inset-0 bg-primary/60 z-10" />
 
         {/* Section Content */}
-        <div className="relative z-20 w-full flex flex-col-reverse md:flex-row items-center justify-between gap-8">
-          {/* Right side (النصوص والأزرار) */}
-          <div className="w-full md:w-[500px] text-light">
+        <div className="relative z-20 w-full flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Text content - full width on mobile, centered */}
+          <div className="w-full max-w-[500px] text-light text-center md:text-right">
             <h1 className="text-4xl lg:text-5xl font-bold pb-6 leading-tight text-white">
               أطلق العنان لقلمك
             </h1>
-            <p className="text-lg lg:text-[20px] leading-relaxed text-gray-200">
+            <p className="text-lg lg:text-[20px] leading-relaxed text-gray-200 mx-auto md:mx-0 max-w-[90%]">
               مدونة علمية تهدف إلى تقديم محتوى رفيع المستوى يلامس شغف المثقف
               النهم، وينتقل بالمعرفة من تعقيد الأوراق البحثية إلى سلاسة القراءة
               اليومية.
             </p>
 
-            <div className="flex flex-col gap-5 justify-center mt-8">
-              <div className="text-light flex flex-row gap-4 items-center font-medium">
-                <Link
-                  href="#"
-                  className="bg-accent/90 text-light hover:brightness-110 transition-all rounded-[6px] px-5 py-2.5 shadow-sm"
-                >
-                  انشر مقالتك
-                </Link>
-                <Link
-                  href="#"
-                  className="bg-accent/90 text-light hover:brightness-110 transition-all rounded-[6px] px-5 py-2.5 shadow-sm"
-                >
-                  تصفح المقالات
-                </Link>
-              </div>
-
-              <div>
-                <Link
-                  href="#"
-                  className="bg-accent/40 text-light hover:brightness-110 transition-all rounded-[6px] px-5 py-2.5 shadow-sm inline-block"
-                >
-                  اشترك في الخدمة البريدية
-                </Link>
-              </div>
+            <div className="text-light mt-10 flex flex-col md:flex-row gap-4 items-center font-medium justify-center md:justify-end">
+              <Link
+                href="#"
+                className="bg-accent/90 text-light hover:brightness-110 transition-all rounded-[6px] px-6 py-3 shadow-sm w-full md:w-auto text-center"
+              >
+                تصفح المقالات
+              </Link>
+              <Link
+                href="#"
+                className="bg-accent/20 border-accent border text-light hover:brightness-110 transition-all rounded-[6px] px-6 py-3 shadow-sm w-full md:w-auto text-center"
+              >
+                انشر مقالتك
+              </Link>
             </div>
+
+            {/* Decorative element for mobile */}
+            <div className="hidden md:block"></div>
           </div>
 
-          {/* Left side (الصورة) */}
-          <div className="flex justify-center items-center">
+          {/* Left side (الصورة) - hidden on mobile, shown on desktop */}
+          <div className="hidden md:flex justify-center items-center w-full">
             <Image
               src="/FullHero.png"
-              className="rounded-2xl object-cover shadow-2xl border border-white/10"
+              className="rounded-2xl object-cover shadow-2xl border border-white/10 max-w-full"
               alt="hero bg"
               height={400}
               width={460}
