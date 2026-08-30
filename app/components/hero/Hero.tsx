@@ -40,146 +40,313 @@ const LATEST_POSTS = [
 
 export default function Hero() {
   return (
-    <div className="font-thamaniyah">
-      {/* Hero Section */}
-      <section className="relative w-full min-h-[550px] flex items-center overflow-hidden px-6 md:px-20 lg:px-30 py-16">
+    <main className="font-thamaniyah w-full overflow-x-hidden" dir="rtl">
+      {/* =========================
+          HERO
+      ========================== */}
+      <section className="relative isolate w-full overflow-hidden">
         {/* Background Video */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          preload="metadata"
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
         >
           <source src="/quill.mp4" type="video/mp4" />
-          متصفحك لا يدعم تشغيل الفيديو.
         </video>
 
-        {/* Dark Overlay للتحكم في وضوح النصوص */}
-        <div className="absolute inset-0 bg-primary/60 z-10" />
+        {/* Overlay */}
+        <div className="absolute inset-0 -z-10 bg-primary/70" />
 
-        {/* Section Content */}
-        <div className="relative z-20 w-full flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Text content - full width on mobile, centered */}
-          <div className="w-full max-w-[500px] text-light text-center md:text-right">
-            <h1 className="text-4xl lg:text-5xl font-bold pb-6 leading-tight text-white">
+        {/* إضافية لتحسين وضوح المحتوى */}
+        <div className="absolute inset-0 -z-10 bg-black/10" />
+
+        {/* Hero Container */}
+        <div className="mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 px-5 py-14 sm:px-8 sm:py-16 md:px-12 md:py-20 lg:grid lg:grid-cols-2 lg:gap-14 lg:px-16 lg:py-24 xl:px-24 xl:py-28">
+          {/* =========================
+              TEXT
+          ========================== */}
+          <div className="order-1 w-full max-w-2xl text-center lg:text-right">
+            <h1
+              className="
+                font-bold text-white
+                text-[clamp(2.25rem,6vw,5.5rem)]
+                leading-[1.15]
+                tracking-tight
+              "
+            >
               أطلق العنان لقلمك
             </h1>
-            <p className="text-lg lg:text-[20px] leading-relaxed text-gray-200 mx-auto md:mx-0 max-w-[90%]">
+
+            <p
+              className="
+                mx-auto mt-6 max-w-xl
+                text-base sm:text-lg md:text-xl lg:text-[1.35rem] xl:text-2xl
+                leading-[1.9]
+                text-white/90
+                lg:mx-0
+              "
+            >
               مدونة علمية تهدف إلى تقديم محتوى رفيع المستوى يلامس شغف المثقف
               النهم، وينتقل بالمعرفة من تعقيد الأوراق البحثية إلى سلاسة القراءة
               اليومية.
             </p>
 
-            <div className="text-light mt-10 flex flex-col md:flex-row gap-4 items-center font-medium justify-center md:justify-end">
+            {/* Buttons */}
+            <div
+              className="
+                mt-8 flex w-full flex-col gap-3
+                sm:flex-row sm:justify-center
+                lg:mt-10 lg:justify-start
+              "
+            >
               <Link
                 href="#"
-                className="bg-accent/90 text-light hover:brightness-110 transition-all rounded-[6px] px-6 py-3 shadow-sm w-full md:w-auto text-center"
+                className="
+                  inline-flex min-h-14 w-full items-center justify-center
+                  rounded-lg bg-accent px-6 py-3
+                  text-base font-semibold text-light
+                  shadow-lg
+                  transition-all duration-300
+                  hover:brightness-110 hover:-translate-y-0.5
+                  sm:w-auto sm:min-w-[170px]
+                "
               >
                 تصفح المقالات
               </Link>
+
               <Link
                 href="#"
-                className="bg-accent/20 border-accent border text-light hover:brightness-110 transition-all rounded-[6px] px-6 py-3 shadow-sm w-full md:w-auto text-center"
+                className="
+                  inline-flex min-h-14 w-full items-center justify-center
+                  rounded-lg border border-accent
+                  bg-accent/20 px-6 py-3
+                  text-base font-semibold text-light
+                  shadow-lg backdrop-blur-sm
+                  transition-all duration-300
+                  hover:bg-accent/30 hover:-translate-y-0.5
+                  sm:w-auto sm:min-w-[170px]
+                "
               >
                 انشر مقالتك
               </Link>
             </div>
-
-            {/* Decorative element for mobile */}
-            <div className="hidden md:block"></div>
           </div>
 
-          {/* Left side (الصورة) - hidden on mobile, shown on desktop */}
-          <div className="hidden md:flex justify-center items-center w-full">
-            <Image
-              src="/FullHero.png"
-              className="rounded-2xl object-cover shadow-2xl border border-white/10 max-w-full"
-              alt="hero bg"
-              height={400}
-              width={460}
-              priority
-            />
+          {/* =========================
+              HERO IMAGE
+          ========================== */}
+          <div className="order-2 flex w-full items-center justify-center">
+            <div
+              className="
+                relative w-full
+                max-w-[300px]
+                sm:max-w-[380px]
+                md:max-w-[480px]
+                lg:max-w-[550px]
+                xl:max-w-[600px]
+              "
+            >
+              <div
+                className="
+                  relative aspect-square w-full
+                  overflow-hidden rounded-2xl
+                  bg-white/10
+                  shadow-2xl
+                  ring-1 ring-white/10
+                "
+              >
+                <Image
+                  src="/FullHero.png"
+                  alt="رسم توضيحي للكتابة والقراءة"
+                  fill
+                  priority
+                  sizes="
+                    (max-width: 640px) 85vw,
+                    (max-width: 1024px) 55vw,
+                    (max-width: 1280px) 45vw,
+                    600px
+                  "
+                  className="object-contain p-3 sm:p-5 md:p-6"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Minimalist Latest Posts Section */}
-      <section className="bg-background px-6 md:px-20 lg:px-30 py-20 text-dark">
-        {/* Header القسم */}
-        <div className="flex flex-row items-end justify-between border-b border-primary/10 pb-5 mb-12">
-          <div>
-            <span className="text-xs md:text-sm font-semibold text-accent uppercase tracking-wider block mb-1">
-              جديد المنصة
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">
-              أحدث المقالات
-            </h2>
-          </div>
-          <Link
-            href="/articles"
-            className="text-primary/70 hover:text-accent font-medium transition-colors text-sm md:text-base border-b border-transparent hover:border-accent pb-0.5"
+      {/* =========================
+          LATEST POSTS
+      ========================== */}
+      <section className="w-full bg-background px-5 py-16 sm:px-8 sm:py-20 md:px-12 lg:px-16 xl:px-24">
+        <div className="mx-auto w-full max-w-[1600px]">
+          {/* Section Header */}
+          <div
+            className="
+              mb-10 flex flex-col gap-5
+              border-b border-primary/10 pb-6
+              sm:mb-12
+              md:flex-row md:items-end md:justify-between
+            "
           >
-            عرض الكل
-          </Link>
-        </div>
+            <div>
+              <span className="mb-2 block text-sm font-semibold tracking-wider text-accent sm:text-base">
+                جديد المنصة
+              </span>
 
-        {/* Grid الكروت المينيمال */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {LATEST_POSTS.map((post) => (
-            <article
-              key={post.id}
-              className="group bg-transparent rounded-2xl overflow-hidden border border-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col justify-between hover:shadow-md"
+              <h2
+                className="
+                  text-3xl font-bold leading-tight text-primary
+                  sm:text-4xl
+                  md:text-5xl
+                  lg:text-6xl
+                "
+              >
+                أحدث المقالات
+              </h2>
+            </div>
+
+            <Link
+              href="/articles"
+              className="
+                w-fit border-b border-transparent pb-1
+                text-sm font-medium text-primary/70
+                transition-colors
+                hover:border-accent hover:text-accent
+                sm:text-base md:text-lg
+              "
             >
-              <div>
-                {/* صورة المقال */}
-                <div className="relative h-52 w-full overflow-hidden bg-primary/5 p-3">
-                  <div className="relative w-full h-full rounded-xl overflow-hidden">
+              عرض الكل
+            </Link>
+          </div>
+
+          {/* Posts Grid */}
+          <div
+            className="
+              grid grid-cols-1 gap-6
+              sm:gap-7
+              md:grid-cols-2
+              lg:grid-cols-3
+              xl:gap-8
+            "
+          >
+            {LATEST_POSTS.map((post) => (
+              <article
+                key={post.id}
+                className="
+                  group flex h-full flex-col overflow-hidden
+                  rounded-2xl
+                  border border-primary/10
+                  bg-transparent
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:border-primary/30
+                  hover:shadow-xl
+                "
+              >
+                {/* Image */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/5 p-2.5 sm:p-3">
+                  <div className="relative h-full w-full overflow-hidden rounded-xl">
                     <Image
                       src={post.image}
                       alt={post.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      sizes="
+                        (max-width: 640px) 100vw,
+                        (max-width: 1024px) 50vw,
+                        33vw
+                      "
+                      className="
+                        object-cover
+                        transition-transform duration-500
+                        ease-out
+                        group-hover:scale-105
+                      "
                     />
                   </div>
                 </div>
 
-                {/* تفاصيل المقال */}
-                <div className="p-6">
-                  <div className="flex items-center gap-3 text-xs text-primary/60 mb-3 font-medium">
-                    <span className="text-accent font-semibold">
-                      {post.category}
-                    </span>
-                    <span>•</span>
-                    <span>{post.readTime}</span>
+                {/* Content */}
+                <div className="flex flex-1 flex-col">
+                  <div className="p-5 sm:p-6">
+                    {/* Meta */}
+                    <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-primary/60 sm:text-sm">
+                      <span className="font-semibold text-accent">
+                        {post.category}
+                      </span>
+
+                      <span>•</span>
+
+                      <span>{post.readTime}</span>
+                    </div>
+
+                    {/* Title */}
+                    <h3
+                      className="
+                        mb-3
+                        text-xl font-bold leading-snug text-primary
+                        sm:text-2xl
+                      "
+                    >
+                      <Link
+                        href={post.slug}
+                        className="
+                          transition-colors
+                          hover:text-accent
+                          focus:outline-none
+                        "
+                      >
+                        {post.title}
+                      </Link>
+                    </h3>
+
+                    {/* Excerpt */}
+                    <p
+                      className="
+                        line-clamp-3
+                        text-sm leading-[1.9]
+                        text-primary/70
+                        sm:text-base md:text-lg
+                      "
+                    >
+                      {post.excerpt}
+                    </p>
                   </div>
 
-                  <h3 className="text-xl font-bold text-primary mb-3 leading-snug group-hover:text-accent transition-colors">
-                    <Link href={post.slug} className="focus:outline-none">
-                      {post.title}
+                  {/* Footer */}
+                  <div
+                    className="
+                      mt-auto flex items-center justify-between
+                      gap-4
+                      px-5 pb-5
+                      text-xs text-primary/50
+                      sm:px-6 sm:pb-6 sm:text-sm
+                    "
+                  >
+                    <span>{post.date}</span>
+
+                    <Link
+                      href={post.slug}
+                      className="
+                        flex shrink-0 items-center gap-1.5
+                        font-semibold text-primary
+                        transition-colors
+                        hover:text-accent
+                      "
+                    >
+                      اقرأ المقال
+                      <span aria-hidden="true">←</span>
                     </Link>
-                  </h3>
-
-                  <p className="text-primary/70 text-sm leading-relaxed line-clamp-3">
-                    {post.excerpt}
-                  </p>
+                  </div>
                 </div>
-              </div>
-
-              {/* أسفل الكرت */}
-              <div className="px-6 pb-6 pt-2 flex items-center justify-between text-xs text-primary/50">
-                <span>{post.date}</span>
-                <Link
-                  href={post.slug}
-                  className="text-primary font-semibold group-hover:text-accent transition-colors flex items-center gap-1"
-                >
-                  اقرأ المقال
-                </Link>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

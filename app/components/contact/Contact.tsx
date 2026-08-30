@@ -18,32 +18,123 @@ export default function ContactUs() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   return (
-    <section className="bg-background px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 py-12 sm:py-16 lg:py-20 font-thamaniyah text-dark">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
-        <div className="w-full lg:w-5/12 text-right">
-          <span className="text-xs sm:text-sm font-semibold text-accent uppercase tracking-wider block mb-2">
+    <section
+      dir="rtl"
+      className="
+        w-full
+        overflow-hidden
+        bg-background
+        px-5 py-14
+        font-thamaniyah text-dark
+        sm:px-8 sm:py-16
+        md:px-12 md:py-20
+        lg:px-16 lg:py-24
+        xl:px-24 xl:py-28
+      "
+    >
+      <div
+        className="
+          mx-auto grid w-full max-w-[1600px]
+          grid-cols-1
+          items-start
+          gap-12
+          lg:grid-cols-12
+          lg:gap-14
+          xl:gap-20
+        "
+      >
+        {/* =====================================================
+            CONTACT INFO
+        ====================================================== */}
+        <div
+          className="
+            w-full
+            text-center
+            lg:col-span-5
+            lg:text-right
+          "
+        >
+          <span
+            className="
+              mb-3 block
+              text-sm font-semibold
+              tracking-wider text-accent
+              sm:text-base
+            "
+          >
             تواصل معنا
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6 leading-tight">
+
+          <h2
+            className="
+              mb-6
+              text-[clamp(2.25rem,5.5vw,5rem)]
+              font-bold
+              leading-[1.15]
+              text-primary
+              sm:mb-8
+            "
+          >
             يسعدنا التحدث إليك في قبس
           </h2>
-          <p className="text-primary/70 text-base lg:text-lg leading-relaxed mb-8">
+
+          <p
+            className="
+              mx-auto mb-8
+              max-w-2xl
+              text-base
+              leading-[1.9]
+              text-primary/70
+              sm:text-lg
+              md:text-xl
+              lg:mx-0
+              lg:text-[1.35rem]
+            "
+          >
             هل لديك استفسار، اقتراح، أو رغبة في المشاركة بالكتابة؟ يسعدنا دائماً
             استلام رسائلك والتواصل مع الكتاب والمفكرين.
           </p>
 
-          <div className="flex flex-col gap-6 border-t border-primary/10 pt-8">
-            <div className="flex items-start gap-4 group cursor-pointer">
-              <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 text-accent group-hover:bg-accent group-hover:text-light group-hover:border-accent transition-all duration-300">
+          {/* Contact Details */}
+          <div
+            className="
+              flex flex-col gap-7
+              border-t border-primary/10
+              pt-8
+              text-right
+              sm:gap-8 sm:pt-10
+            "
+          >
+            {/* Email */}
+            <div className="group flex items-start gap-4 sm:gap-5">
+              <div
+                className="
+                  flex shrink-0 items-center justify-center
+                  rounded-xl
+                  border border-primary/10
+                  bg-primary/5
+                  p-3
+                  text-accent
+                  transition-all duration-300
+                  group-hover:border-accent
+                  group-hover:bg-accent
+                  group-hover:text-light
+                  sm:p-4
+                "
+              >
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6 sm:h-7 sm:w-7"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -53,23 +144,64 @@ export default function ContactUs() {
                   />
                 </svg>
               </div>
-              <div>
-                <h4 className="text-sm font-bold text-primary group-hover:text-accent transition-colors duration-300">
+
+              <div className="min-w-0 flex-1">
+                <h4
+                  className="
+                    text-base font-bold
+                    text-primary
+                    transition-colors duration-300
+                    group-hover:text-accent
+                    sm:text-lg
+                  "
+                >
                   البريد الإلكتروني
                 </h4>
-                <p className="text-sm text-primary/70 font-sans mt-0.5">
+
+                <a
+                  href="mailto:contact@qabas.com"
+                  dir="ltr"
+                  className="
+                    mt-1 block
+                    w-fit
+                    max-w-full
+                    break-all
+                    text-left
+                    font-sans
+                    text-sm text-primary/70
+                    transition-colors
+                    hover:text-accent
+                    sm:text-base
+                  "
+                >
                   contact@qabas.com
-                </p>
+                </a>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 group cursor-pointer">
-              <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 text-accent group-hover:bg-accent group-hover:text-light group-hover:border-accent transition-all duration-300">
+            {/* Publishing */}
+            <div className="group flex items-start gap-4 sm:gap-5">
+              <div
+                className="
+                  flex shrink-0 items-center justify-center
+                  rounded-xl
+                  border border-primary/10
+                  bg-primary/5
+                  p-3
+                  text-accent
+                  transition-all duration-300
+                  group-hover:border-accent
+                  group-hover:bg-accent
+                  group-hover:text-light
+                  sm:p-4
+                "
+              >
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6 sm:h-7 sm:w-7"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -79,11 +211,29 @@ export default function ContactUs() {
                   />
                 </svg>
               </div>
-              <div>
-                <h4 className="text-sm font-bold text-primary group-hover:text-accent transition-colors duration-300">
+
+              <div className="min-w-0 flex-1">
+                <h4
+                  className="
+                    text-base font-bold
+                    text-primary
+                    transition-colors duration-300
+                    group-hover:text-accent
+                    sm:text-lg
+                  "
+                >
                   النشر والمشاركات
                 </h4>
-                <p className="text-sm text-primary/70 mt-0.5">
+
+                <p
+                  className="
+                    mt-1
+                    text-sm
+                    leading-[1.8]
+                    text-primary/70
+                    sm:text-base
+                  "
+                >
                   نرحب بجميع المقالات والأبحاث اللغوية والأدبية.
                 </p>
               </div>
@@ -91,55 +241,126 @@ export default function ContactUs() {
           </div>
         </div>
 
-        <div className="w-full lg:w-7/12 bg-transparent rounded-2xl border border-primary/10 p-6 sm:p-10 shadow-sm hover:border-primary/25 transition-all duration-300">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="flex flex-col gap-2">
+        {/* =====================================================
+            FORM
+        ====================================================== */}
+        <div
+          className="
+            w-full
+            rounded-2xl
+            border border-primary/10
+            bg-transparent
+            p-5
+            shadow-sm
+            transition-all duration-300
+            hover:border-primary/25
+            sm:p-7
+            md:p-8
+            lg:col-span-7
+            lg:p-10
+            xl:p-12
+          "
+        >
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-5 sm:gap-6 md:gap-7"
+          >
+            {/* Name + Email */}
+            <div
+              className="
+                grid grid-cols-1 gap-5
+                sm:grid-cols-2
+                sm:gap-6
+                md:gap-7
+              "
+            >
+              {/* Name */}
+              <div className="flex min-w-0 flex-col gap-2.5">
                 <label
                   htmlFor="name"
-                  className="text-sm font-medium text-primary"
+                  className="text-base font-medium text-primary sm:text-lg"
                 >
                   الاسم الكامل
                 </label>
+
                 <input
                   type="text"
                   id="name"
                   name="name"
                   required
+                  autoComplete="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="أدخل اسمك"
-                  className="w-full px-4 py-3 rounded-xl bg-primary/5 border border-primary/10 hover:border-primary/30 focus:border-accent focus:bg-background focus:outline-none transition-all text-sm text-primary placeholder:text-primary/40"
+                  className="
+                    min-w-0 w-full
+                    rounded-xl
+                    border border-primary/10
+                    bg-primary/5
+                    px-4 py-3.5
+                    text-sm text-primary
+                    outline-none
+                    transition-all
+                    placeholder:text-primary/40
+                    hover:border-primary/30
+                    focus:border-accent
+                    focus:bg-background
+                    sm:px-5 sm:py-4
+                    sm:text-base
+                  "
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
+              {/* Email */}
+              <div className="flex min-w-0 flex-col gap-2.5">
                 <label
                   htmlFor="email"
-                  className="text-sm font-medium text-primary"
+                  className="text-base font-medium text-primary sm:text-lg"
                 >
                   البريد الإلكتروني
                 </label>
+
                 <input
                   type="email"
                   id="email"
                   name="email"
                   required
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="name@example.com"
-                  className="w-full px-4 py-3 rounded-xl bg-primary/5 border border-primary/10 hover:border-primary/30 focus:border-accent focus:bg-background focus:outline-none transition-all text-sm text-primary placeholder:text-primary/40 dir-ltr text-right"
+                  dir="ltr"
+                  className="
+                    min-w-0 w-full
+                    rounded-xl
+                    border border-primary/10
+                    bg-primary/5
+                    px-4 py-3.5
+                    text-left
+                    font-sans
+                    text-sm text-primary
+                    outline-none
+                    transition-all
+                    placeholder:text-primary/40
+                    hover:border-primary/30
+                    focus:border-accent
+                    focus:bg-background
+                    sm:px-5 sm:py-4
+                    sm:text-base
+                  "
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Subject */}
+            <div className="flex min-w-0 flex-col gap-2.5">
               <label
                 htmlFor="subject"
-                className="text-sm font-medium text-primary"
+                className="text-base font-medium text-primary sm:text-lg"
               >
                 موضوع الرسالة
               </label>
+
               <input
                 type="text"
                 id="subject"
@@ -148,42 +369,125 @@ export default function ContactUs() {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="عن ماذا تود التحدث؟"
-                className="w-full px-4 py-3 rounded-xl bg-primary/5 border border-primary/10 hover:border-primary/30 focus:border-accent focus:bg-background focus:outline-none transition-all text-sm text-primary placeholder:text-primary/40"
+                className="
+                  min-w-0 w-full
+                  rounded-xl
+                  border border-primary/10
+                  bg-primary/5
+                  px-4 py-3.5
+                  text-sm text-primary
+                  outline-none
+                  transition-all
+                  placeholder:text-primary/40
+                  hover:border-primary/30
+                  focus:border-accent
+                  focus:bg-background
+                  sm:px-5 sm:py-4
+                  sm:text-base
+                "
               />
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Message */}
+            <div className="flex min-w-0 flex-col gap-2.5">
               <label
                 htmlFor="message"
-                className="text-sm font-medium text-primary"
+                className="text-base font-medium text-primary sm:text-lg"
               >
                 الرسالة
               </label>
+
               <textarea
                 id="message"
                 name="message"
-                rows={5}
+                rows={6}
                 required
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="اكتب رسالتك هنا..."
-                className="w-full px-4 py-3 rounded-xl bg-primary/5 border border-primary/10 hover:border-primary/30 focus:border-accent focus:bg-background focus:outline-none transition-all text-sm text-primary placeholder:text-primary/40 resize-none"
-              ></textarea>
+                className="
+                  min-h-[160px] w-full
+                  resize-none
+                  rounded-xl
+                  border border-primary/10
+                  bg-primary/5
+                  px-4 py-3.5
+                  text-sm text-primary
+                  outline-none
+                  transition-all
+                  placeholder:text-primary/40
+                  hover:border-primary/30
+                  focus:border-accent
+                  focus:bg-background
+                  sm:min-h-[180px]
+                  sm:px-5 sm:py-4
+                  sm:text-base
+                "
+              />
             </div>
 
-            {/* أزرار الإرسال والنص الخاص بسياسة الخصوصية */}
-            <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+            {/* Submit */}
+            <div
+              className="
+                mt-2 flex flex-col gap-4
+                sm:mt-3
+                sm:flex-row
+                sm:items-center
+                sm:gap-5
+              "
+            >
               <button
                 type="submit"
-                className="border bg-gold text-primary font-bold px-8 py-3.5 rounded-xl hover:bg-accent hover:text-light transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 text-sm cursor-pointer active:translate-y-0"
+                className="
+                  inline-flex
+                  min-h-14
+                  w-full
+                  shrink-0
+                  items-center justify-center
+                  rounded-xl
+                  border
+                  bg-gold
+                  px-7 py-3.5
+                  text-base font-bold
+                  text-primary
+                  shadow-sm
+                  transition-all duration-300
+                  hover:-translate-y-0.5
+                  hover:bg-accent
+                  hover:text-light
+                  hover:shadow-lg
+                  active:translate-y-0
+                  sm:w-auto
+                  sm:min-w-[180px]
+                  sm:px-10
+                  sm:text-lg
+                "
               >
                 إرسال الرسالة
               </button>
-              <p className="text-xs text-primary/60 leading-relaxed">
+
+              <p
+                className="
+                  text-center
+                  text-xs
+                  leading-[1.8]
+                  text-primary/60
+                  sm:text-right
+                  sm:text-sm
+                  md:text-base
+                "
+              >
                 بإرسالك هذه الرسالة، فإنك توافق على{" "}
                 <Link
                   href="/privacy"
-                  className="text-accent underline underline-offset-2 hover:text-primary transition-colors font-medium"
+                  className="
+                    font-medium
+                    text-accent
+                    underline
+                    underline-offset-2
+                    transition-colors
+                    hover:text-primary
+                  "
                 >
                   سياسة الخصوصية
                 </Link>{" "}
