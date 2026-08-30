@@ -82,7 +82,7 @@ export default function ContactUs() {
               sm:mb-8
             "
           >
-            يسعدنا التحدث إليك في قبس
+            صدرنا رحب لتلقي الاستفسارات
           </h2>
 
           <p

@@ -62,14 +62,14 @@ export default function Hero() {
         <div className="absolute inset-0 -z-10 bg-primary/70" />
 
         {/* إضافية لتحسين وضوح المحتوى */}
-        <div className="absolute inset-0 -z-10 bg-black/10" />
+        <div className="absolute inset-0 -z-10 bg-black/60" />
 
         {/* Hero Container */}
         <div className="mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 px-5 py-14 sm:px-8 sm:py-16 md:px-12 md:py-20 lg:grid lg:grid-cols-2 lg:gap-14 lg:px-16 lg:py-24 xl:px-24 xl:py-28">
           {/* =========================
               TEXT
           ========================== */}
-          <div className="order-1 pt-25 w-full max-w-2xl text-center lg:text-right">
+          <div className="order-1  w-full max-w-2xl text-center lg:text-right">
             <h1
               className="
                 font-bold text-white
@@ -78,7 +78,7 @@ export default function Hero() {
                 tracking-tight
               "
             >
-              أطلق العنان لقلمك
+              أطلق العنان لقلمك!
             </h1>
 
             <p
@@ -90,9 +90,8 @@ export default function Hero() {
                 lg:mx-0
               "
             >
-              مدونة علمية تهدف إلى تقديم محتوى رفيع المستوى يلامس شغف المثقف
-              النهم، وينتقل بالمعرفة من تعقيد الأوراق البحثية إلى سلاسة القراءة
-              اليومية.
+              قبس هي مدونة ناشئة تهدف لاقتباس مختلف العلوم وعرضها في صور مبسطة
+              مع المراجعة والدقة في النشر.
             </p>
 
             {/* Buttons */}
@@ -142,37 +141,31 @@ export default function Hero() {
           <div className="order-2 flex w-full items-center justify-center">
             <div
               className="
-                relative w-full
-                max-w-[300px]
-                sm:max-w-[380px]
-                md:max-w-[480px]
-                lg:max-w-[550px]
-                xl:max-w-[600px]
-              "
+      relative
+      w-full
+      max-w-[300px]
+      sm:max-w-[380px]
+      md:max-w-[480px]
+      lg:max-w-[550px]
+      xl:max-w-[600px]
+      aspect-square
+      overflow-hidden
+      rounded-2xl
+    "
             >
-              <div
-                className="
-                  relative aspect-square w-full
-                  overflow-hidden rounded-2xl
-                  bg-white/10
-                  shadow-2xl
-                  ring-1 ring-white/10
-                "
-              >
-                <Image
-                  src="/FullHero.png"
-                  alt="رسم توضيحي للكتابة والقراءة"
-                  fill
-                  priority
-                  sizes="
-                    (max-width: 640px) 85vw,
-                    (max-width: 1024px) 55vw,
-                    (max-width: 1280px) 45vw,
-                    600px
-                  "
-                  className="object-contain p-3 sm:p-5 md:p-6"
-                />
-              </div>
+              <Image
+                src="/heroBg.png"
+                alt="رسم توضيحي للكتابة والقراءة"
+                fill
+                priority
+                sizes="
+        (max-width: 640px) 85vw,
+        (max-width: 1024px) 55vw,
+        (max-width: 1280px) 45vw,
+        600px
+      "
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
@@ -338,7 +331,6 @@ export default function Hero() {
                       "
                     >
                       اقرأ المقال
-                      <span aria-hidden="true">←</span>
                     </Link>
                   </div>
                 </div>

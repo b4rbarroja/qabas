@@ -171,7 +171,7 @@ export default function Footer() {
               aria-label="قبس - الصفحة الرئيسية"
             >
               <Image
-                src="/qabasLight.png"
+                src="/whiteQabas1.png"
                 width={80}
                 height={80}
                 alt="قبس"
@@ -193,8 +193,8 @@ export default function Footer() {
                 sm:text-base
               "
             >
-              مدونة علمية تهدف إلى تقديم محتوى رفيع المستوى يلامس شغف المثقف
-              النهم.
+              قبس هي مدونة ناشئة تهدف لاقتباس مختلف العلوم وعرضها في صور مبسطة
+              مع المراجعة والدقة في النشر.
             </p>
           </div>
 

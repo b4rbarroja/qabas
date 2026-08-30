@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,113 +13,35 @@ const navLinks = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-
-  /* =========================
-     قراءة الثيم الحالي فقط
-  ========================= */
-  useEffect(() => {
-    const updateTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    };
-
-    updateTheme();
-
-    // لو الثيم اتغير من مكان تاني في الموقع
-    const observer = new MutationObserver(updateTheme);
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  /* =========================
-     Scroll
-  ========================= */
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
-
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   return (
-    <header
-      className={`
-        fixed
-        top-0
-        left-0
-        right-0
-        z-[100]
-        w-full
-        font-thamaniyah
-
-        transition-all
-        duration-500
-
-        ${
-          isScrolled
-            ? `
-              bg-background/90
-              backdrop-blur-xl
-              shadow-lg
-              border-b
-              border-primary/10
-            `
-            : `
-              bg-transparent
-              border-transparent
-            `
-        }
-      `}
-    >
+    <header className="relative z-[100] w-full bg-background font-thamaniyah">
       <div
         className="
-          mx-auto
-          flex
-          h-[76px]
-          w-full
-          max-w-[1400px]
-          items-center
-          justify-between
-
-          px-4
-          sm:px-6
-          md:px-10
-          lg:px-20
-          xl:px-32
-        "
+    flex
+    h-[76px]
+    w-full
+    items-center
+    justify-between
+    px-4
+    sm:px-6
+    md:px-10
+    lg:px-15
+    xl:px-20
+  "
       >
         {/* =========================
             Logo
         ========================= */}
 
-        <Link href="/" className="relative z-[110] shrink-0">
+        <Link href="/" className="shrink-0">
           <Image
-            src={isDark ? "/qabaLogo.png" : "/qabasLight.png"}
+            src="/blackQabas2.png"
             width={70}
             height={70}
             alt="قبس"
             priority
-            className="
-    h-auto
-    w-14
-    sm:w-16
-    md:w-[70px]
-    transition-all
-    duration-300
-  "
+            className="h-auto w-14 sm:w-16 md:w-[70px]"
           />
         </Link>
 
@@ -127,18 +49,7 @@ export default function Navbar() {
             Desktop Navigation
         ========================= */}
 
-        <nav
-          className={`
-            hidden
-            md:flex
-            items-center
-            gap-6
-            transition-colors
-            duration-300
-
-            ${isScrolled ? "text-dark" : "text-white"}
-          `}
-        >
+        <nav className="hidden items-center gap-6 text-dark md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -151,16 +62,13 @@ export default function Navbar() {
                     px-5
                     py-2.5
                     text-light
-
                     transition-all
-                    duration-300
-
+                    duration-200
                     hover:brightness-110
-                    hover:-translate-y-0.5
                   `
                   : `
                     transition-colors
-                    duration-300
+                    duration-200
                     hover:text-accent
                   `
               }
@@ -177,23 +85,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`
-            relative
-            z-[110]
-            flex
-            h-10
-            w-10
-            items-center
-            justify-center
-            rounded-lg
-
-            transition-all
-            duration-300
-
-            ${isScrolled ? "text-dark" : "text-white"}
-
-            md:hidden
-          `}
+          className="flex h-10 w-10 items-center justify-center text-dark md:hidden"
           aria-label={isMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
           aria-expanded={isMenuOpen}
         >
@@ -220,7 +112,6 @@ export default function Navbar() {
             >
               <path
                 strokeLinecap="round"
-                strokeLinejoin="round"
                 strokeWidth={2}
                 d="M4 6h16M4 12h16M4 18h16"
               />
@@ -231,30 +122,20 @@ export default function Navbar() {
 
       {/* =========================
           Mobile Menu
-      ========================= */}
+        ========================= */}
 
       <div
         className={`
-          fixed
-          inset-0
-          z-[90]
-
-          flex
-          items-center
-          justify-center
-
+          fixed inset-0 z-[90]
+          flex items-center justify-center
           bg-background/90
           backdrop-blur-2xl
-
           md:hidden
-
-          transition-all
-          duration-500
-
+          transition-all duration-500
           ${
             isMenuOpen
               ? "visible opacity-100"
-              : "invisible pointer-events-none opacity-0"
+              : "pointer-events-none invisible opacity-0"
           }
         `}
       >
@@ -267,10 +148,8 @@ export default function Navbar() {
             items-center
             gap-7
             px-6
-
             transition-all
             duration-500
-
             ${
               isMenuOpen
                 ? "translate-y-0 opacity-100"
@@ -294,6 +173,8 @@ export default function Navbar() {
                     text-center
                     text-lg
                     text-light
+                    transition-all
+                    hover:brightness-110
                   `
                   : `
                     text-2xl
@@ -308,6 +189,36 @@ export default function Navbar() {
             </Link>
           ))}
         </nav>
+
+        {/* Close Button */}
+
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen(false)}
+          className="
+            absolute
+            left-6
+            top-6
+            text-dark
+            transition-colors
+            hover:text-accent
+          "
+          aria-label="إغلاق القائمة"
+        >
+          <svg
+            className="h-8 w-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
       </div>
     </header>
   );
