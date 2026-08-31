@@ -91,7 +91,7 @@ export default function Hero() {
           tracking-tight
         "
             >
-              أطلق العنان لقلمك!
+              أطــلــق العــنان لقلــمــك!
             </h1>
 
             <p
