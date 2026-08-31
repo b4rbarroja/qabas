@@ -45,50 +45,64 @@ export default function Hero() {
           HERO
       ========================== */}
       <section className="relative isolate w-full overflow-hidden">
-        {/* Background Video */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-          className="absolute inset-0 -z-20 h-full w-full object-cover"
-        >
-          <source src="/quill.mp4" type="video/mp4" />
-        </video>
+        {/* Background */}
+        <Image
+          src="/herobg.jpg"
+          fill
+          priority
+          alt="background"
+          className="object-cover -z-20"
+        />
 
         {/* Overlay */}
         <div className="absolute inset-0 -z-10 bg-primary/70" />
-
-        {/* إضافية لتحسين وضوح المحتوى */}
-        <div className="absolute inset-0 -z-10 bg-black/60" />
+        <div className="absolute inset-0 -z-10 bg-black/80" />
 
         {/* Hero Container */}
-        <div className="mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 px-5 py-14 sm:px-8 sm:py-16 md:px-12 md:py-20 lg:grid lg:grid-cols-2 lg:gap-14 lg:px-16 lg:py-24 xl:px-24 xl:py-28">
+        <div
+          className="
+      mx-auto flex w-full max-w-[1600px]
+      flex-col items-center
+      gap-8
+      px-5 py-12
+      sm:px-8 sm:py-16
+      md:px-12 md:py-20
+      lg:grid lg:grid-cols-2
+      lg:gap-30
+      lg:px-16 lg:py-20
+      xl:px-10 xl:py-24
+    "
+        >
           {/* =========================
-              TEXT
-          ========================== */}
-          <div className="order-1  w-full max-w-2xl text-center lg:text-right">
+        TEXT
+    ========================== */}
+          <div
+            className="
+        order-1 w-full max-w-2xl
+        text-center
+        lg:text-right
+      "
+          >
             <h1
               className="
-                font-bold text-white
-                text-[clamp(2.25rem,6vw,5.5rem)]
-                leading-[1.15]
-                tracking-tight
-              "
+          font-bold text-white
+          text-[clamp(2.25rem,6vw,5.5rem)]
+          leading-[1.15]
+          tracking-tight
+        "
             >
               أطلق العنان لقلمك!
             </h1>
 
             <p
               className="
-                mx-auto mt-6 max-w-xl
-                text-base sm:text-lg md:text-xl lg:text-[1.35rem] xl:text-2xl
-                leading-[1.9]
-                text-white/90
-                lg:mx-0
-              "
+          mx-auto mt-6 max-w-xl
+          text-base sm:text-lg md:text-xl
+          lg:text-[1.35rem] xl:text-2xl
+          leading-[1.9]
+          text-white/90
+          lg:mx-0
+        "
             >
               قبس هي مدونة ناشئة تهدف لاقتباس مختلف العلوم وعرضها في صور مبسطة
               مع المراجعة والدقة في النشر.
@@ -97,22 +111,22 @@ export default function Hero() {
             {/* Buttons */}
             <div
               className="
-                mt-8 flex w-full flex-col gap-3
-                sm:flex-row sm:justify-center
-                lg:mt-10 lg:justify-start
-              "
+          mt-8 flex w-full flex-col gap-3
+          sm:flex-row sm:justify-center
+          lg:mt-10 lg:justify-start
+        "
             >
               <Link
                 href="#"
                 className="
-                  inline-flex min-h-14 w-full items-center justify-center
-                  rounded-lg bg-accent px-6 py-3
-                  text-base font-semibold text-light
-                  shadow-lg
-                  transition-all duration-300
-                  hover:brightness-110 hover:-translate-y-0.5
-                  sm:w-auto sm:min-w-[170px]
-                "
+            inline-flex min-h-14 w-full items-center justify-center
+            rounded-lg bg-background px-6 py-3
+             font-semibold text-dark
+            shadow-lg
+            transition-all duration-300
+            hover:-translate-y-0.5 hover:brightness-110
+            sm:w-auto sm:min-w-[170px]
+          "
               >
                 تصفح المقالات
               </Link>
@@ -120,15 +134,15 @@ export default function Hero() {
               <Link
                 href="#"
                 className="
-                  inline-flex min-h-14 w-full items-center justify-center
-                  rounded-lg border border-accent
-                  bg-accent/20 px-6 py-3
-                  text-base font-semibold text-light
-                  shadow-lg backdrop-blur-sm
-                  transition-all duration-300
-                  hover:bg-accent/30 hover:-translate-y-0.5
-                  sm:w-auto sm:min-w-[170px]
-                "
+            inline-flex min-h-14 w-full items-center justify-center
+            rounded-lg border border-accent
+            bg-accent/20 px-6 py-3
+            text-base font-semibold text-light
+            shadow-lg backdrop-blur-sm
+            transition-all duration-300
+            hover:-translate-y-0.5 hover:bg-accent/30
+            sm:w-auto sm:min-w-[170px]
+          "
               >
                 انشر مقالتك
               </Link>
@@ -136,35 +150,42 @@ export default function Hero() {
           </div>
 
           {/* =========================
-              HERO IMAGE
-          ========================== */}
-          <div className="order-2 flex w-full items-center justify-center">
+        HERO IMAGE
+    ========================== */}
+          {/* =========================
+    HERO IMAGE
+========================== */}
+          <div
+            className="
+    order-2 flex w-full
+    items-center justify-center
+    lg:justify-start
+    
+  "
+          >
             <div
               className="
       relative
-      w-full
-      max-w-[300px]
-      sm:max-w-[380px]
-      md:max-w-[480px]
-      lg:max-w-[550px]
-      xl:max-w-[600px]
-      aspect-square
-      overflow-hidden
-      rounded-2xl
+      h-[320px] w-[320px]
+      sm:h-[400px] sm:w-[400px]
+      md:h-[500px] md:w-[500px]
+      lg:h-[620px] lg:w-[760px]
+      xl:h-[680px] xl:w-[850px]
     "
             >
               <Image
-                src="/heroBg.png"
+                src="/pngHero1.png"
                 alt="رسم توضيحي للكتابة والقراءة"
                 fill
                 priority
                 sizes="
-        (max-width: 640px) 85vw,
-        (max-width: 1024px) 55vw,
-        (max-width: 1280px) 45vw,
-        600px
+        (max-width: 640px) 320px,
+        (max-width: 768px) 400px,
+        (max-width: 1024px) 500px,
+        (max-width: 1280px) 760px,
+        850px
       "
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           </div>

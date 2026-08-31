@@ -396,7 +396,7 @@ export default function ContactUs() {
                   shadow-sm
                   transition-all duration-300
                   hover:-translate-y-0.5
-                  hover:bg-accent
+                  hover:bg-black
                   hover:text-light
                   hover:shadow-lg
                   active:translate-y-0

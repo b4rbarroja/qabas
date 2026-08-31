@@ -105,9 +105,9 @@ export default function AboutPage() {
                   inline-flex min-h-14 w-full
                   items-center justify-center
                   rounded-lg
-                  bg-accent/90
+                  bg-background
                   px-6 py-3
-                  text-base font-semibold text-light
+                  text-dark font-semibold
                   shadow-lg
                   transition-all duration-300
                   hover:-translate-y-0.5
@@ -127,7 +127,8 @@ export default function AboutPage() {
                   border border-accent
                   bg-accent/20
                   px-6 py-3
-                  text-base font-semibold text-light
+                  text-base font-semibold
+                  text-light
                   shadow-lg
                   transition-all duration-300
                   hover:-translate-y-0.5
@@ -153,16 +154,16 @@ export default function AboutPage() {
             <div
               className="
                 relative w-full
-                max-w-[300px]
-                sm:max-w-[380px]
-                md:max-w-[460px]
-                lg:max-w-[520px]
-                xl:max-w-[580px]
+                max-w-[340px]
+                sm:max-w-[420px]
+                md:max-w-[500px]
+                lg:max-w-[580px]
+                xl:max-w-[640px]
               "
             >
               <div className="relative aspect-square w-full">
                 <Image
-                  src="/whiteabt.png"
+                  src="/qabasLogo.png"
                   alt="عن قبس"
                   fill
                   priority
@@ -170,10 +171,9 @@ export default function AboutPage() {
                     (max-width: 640px) 85vw,
                     (max-width: 768px) 70vw,
                     (max-width: 1024px) 50vw,
-                    580px
+                    640px
                   "
                   className="
-                    rounded-2xl
                     object-contain
                     drop-shadow-2xl
                   "
@@ -256,36 +256,92 @@ export default function AboutPage() {
                   md:text-xl
                 "
               >
-                يمكنك البدء في نشر مقالاتك معنا ، ولكن ما هي الخطوات؟{" "}
+                يمكنك البدء في نشر مقالاتك معنا ، ولكن ما هي الخطوات؟
               </p>
             </div>
 
-            {/* Image */}
+            {/* =================================================
+                PAPER IMAGE FRAME
+            ================================================== */}
             <div
               className="
-                relative mt-2 w-full
-                aspect-[4/5]
-                overflow-hidden
-                rounded-t-[80px]
-                rounded-b-2xl
-                shadow-xl
-                sm:rounded-t-[110px]
-                md:aspect-[5/6]
-                md:rounded-t-[140px]
+                relative
+                mt-4
+                w-full
+                px-3 pb-4
+                sm:px-5 sm:pb-6
+                md:px-6 md:pb-7
                 lg:mt-auto
-                lg:aspect-[4/5]
               "
             >
-              <Image
-                src="/blackStart.png"
-                alt="ابدأ الآن"
-                fill
-                sizes="
-                  (max-width: 1024px) 100vw,
-                  42vw
+              {/* Paper shadow */}
+              <div
+                className="
+                  absolute
+                  inset-3
+                  translate-x-2
+                  translate-y-3
+                  bg-black/15
+                  blur-md
+                  sm:inset-5
                 "
-                className="object-cover"
+                style={{
+                  clipPath:
+                    "polygon(2% 4%, 14% 1%, 27% 3%, 42% 1%, 57% 4%, 73% 2%, 87% 5%, 98% 2%, 96% 18%, 99% 34%, 97% 51%, 100% 68%, 96% 84%, 98% 97%, 83% 95%, 68% 98%, 52% 96%, 37% 99%, 21% 96%, 5% 98%, 7% 83%, 3% 67%, 5% 51%, 2% 35%, 5% 19%)",
+                }}
               />
+
+              {/* Paper */}
+              <div
+                className="
+                  relative
+                  w-full
+                  aspect-[4/5]
+                  bg-[#f3eee2]
+                  p-5
+                  sm:p-7
+                  md:p-9
+                  lg:p-10
+                "
+                style={{
+                  clipPath:
+                    "polygon(2% 4%, 14% 1%, 27% 3%, 42% 1%, 57% 4%, 73% 2%, 87% 5%, 98% 2%, 96% 18%, 99% 34%, 97% 51%, 100% 68%, 96% 84%, 98% 97%, 83% 95%, 68% 98%, 52% 96%, 37% 99%, 21% 96%, 5% 98%, 7% 83%, 3% 67%, 5% 51%, 2% 35%, 5% 19%)",
+                }}
+              >
+                {/* Slight paper texture */}
+                <div
+                  className="
+                    pointer-events-none
+                    absolute inset-0
+                    opacity-[0.08]
+                  "
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at 20% 30%, #000 0.7px, transparent 0.8px), radial-gradient(circle at 70% 60%, #000 0.6px, transparent 0.7px)",
+                    backgroundSize: "13px 13px, 17px 17px",
+                  }}
+                />
+
+                {/* Image */}
+                <div className="relative z-10 h-full w-full">
+                  <Image
+                    src="/machine.png"
+                    alt="ابدأ الآن"
+                    fill
+                    priority
+                    sizes="
+                      (max-width: 640px) 90vw,
+                      (max-width: 768px) 80vw,
+                      (max-width: 1024px) 45vw,
+                      (max-width: 1280px) 38vw,
+                      560px
+                    "
+                    className="
+                      object-contain
+                    "
+                  />
+                </div>
+              </div>
             </div>
           </motion.div>
 
@@ -399,9 +455,9 @@ export default function AboutPage() {
                         mb-2
                         text-lg font-bold
                         leading-snug
-                        text-primary
+                        text-black/70
                         transition-colors duration-300
-                        group-hover:text-accent
+                        group-hover:text-black/90
                         sm:text-xl
                         md:text-2xl
                         lg:text-3xl
