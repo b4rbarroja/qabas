@@ -1,13 +1,13 @@
 export default async function discordSender({
   name,
   email,
-  title,
-  content,
+  subject,
+  message,
 }: {
   name: string;
   email: string;
-  title: string;
-  content: string;
+  subject: string;
+  message: string;
 }) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
@@ -30,12 +30,12 @@ export default async function discordSender({
           },
           {
             name: "📧 Title",
-            value: `\`${title}\``,
+            value: `\`${subject}\``,
             inline: false,
           },
           {
             name: "💬 Message Details",
-            value: `>>> ${content}`,
+            value: `>>> ${message}`,
             inline: false,
           },
         ],

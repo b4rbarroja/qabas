@@ -11,8 +11,29 @@ export default function ContactUs() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "فشل إرسال الرسالة");
+      }
+
+      alert("تم إرسال رسالتك بنجاح");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error(error);
+      alert("حدث خطأ ، أعد المحاولة مرة أخرى !");
+    }
   };
 
   const handleChange = (

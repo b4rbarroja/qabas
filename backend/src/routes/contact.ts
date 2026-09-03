@@ -1,9 +1,9 @@
-import express, { type Express, type Request, type Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
 import authMiddleWare from "../middlewares/authMiddleware";
 import discordSender from "../services/discord";
 
-const router = express();
+const router = Router();
 
 router.get("/", authMiddleWare, async (req: Request, res: Response) => {
   try {
@@ -11,25 +11,37 @@ router.get("/", authMiddleWare, async (req: Request, res: Response) => {
     res.status(200).json(messages);
   } catch (error) {
     console.error(error);
-    res.status(500).json(`Failed to fetch messages due to error ${error}`);
+    res.status(500).json({ error: `Failed to fetch messages: ${error}` });
   }
 });
 
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, email, title, content } = req.body;
+    const { name, email, subject, message } = req.body;
+
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: "All fields are needed" });
+    }
+
     const newMessage = await prisma.message.create({
       data: {
         name,
         email,
-        title,
-        content,
+        subject,
+        message,
       },
     });
-    discordSender({ name, email, title, content });
-    res.status(200).json(newMessage);
+
+    try {
+      await discordSender({ name, email, subject, message });
+    } catch (discordError) {
+      console.error("Discord Notification Error:", discordError);
+    }
+
+    res.status(201).json(newMessage);
   } catch (error) {
-    res.status(500).json(`Can't create the message due to error: ${error}`);
+    console.error("Error creating message:", error);
+    res.status(500).json({ error: `Can't create the message: ${error}` });
   }
 });
 
