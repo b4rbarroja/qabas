@@ -1,6 +1,7 @@
 import express, { type Express, type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
 import authMiddleWare from "../middlewares/authMiddleware";
+import discordSender from "../services/discord";
 
 const router = express();
 
@@ -25,6 +26,7 @@ router.post("/", async (req: Request, res: Response) => {
         content,
       },
     });
+    discordSender({ name, email, title, content });
     res.status(200).json(newMessage);
   } catch (error) {
     res.status(500).json(`Can't create the message due to error: ${error}`);
