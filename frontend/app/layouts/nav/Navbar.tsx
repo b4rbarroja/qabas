@@ -7,7 +7,8 @@ import Image from "next/image";
 const navLinks = [
   { href: "/", label: "الرئيسية" },
   { href: "/posts", label: "التدوينات" },
-  { href: "/about", label: "من نحن" },
+  { href: "/#about", label: "من نحن" },
+  { href: "/login", label: "تسجيل الدخول" },
   { href: "/register", label: "سجل معنا", isPrimary: true },
 ];
 
@@ -33,7 +34,6 @@ export default function Navbar() {
         {/* =========================
             Logo
         ========================= */}
-
         <Link href="/" className="shrink-0">
           <Image
             src="/blackQabas2.png"
@@ -48,7 +48,6 @@ export default function Navbar() {
         {/* =========================
             Desktop Navigation
         ========================= */}
-
         <nav className="hidden items-center gap-6 text-dark md:flex">
           {navLinks.map((link) => (
             <Link
@@ -81,7 +80,6 @@ export default function Navbar() {
         {/* =========================
             Mobile Burger
         ========================= */}
-
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -123,7 +121,6 @@ export default function Navbar() {
       {/* =========================
           Mobile Menu
         ========================= */}
-
       <div
         className={`
           fixed inset-0 z-[90]
@@ -191,7 +188,6 @@ export default function Navbar() {
         </nav>
 
         {/* Close Button */}
-
         <button
           type="button"
           onClick={() => setIsMenuOpen(false)}

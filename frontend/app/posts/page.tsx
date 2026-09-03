@@ -1,3 +1,10 @@
-export default function Posts() {
-  return <h2>hello guys</h2>;
+import PostsHero from "../components/posts/hero/Hero";
+
+export const metadata = {
+  title: "قسم المقالات | مدونة قبس",
+  description: "هنا يتم نشر أحدث المقالات التي تم قبولها واعتمادها في منصة قبس.",
+};
+
+export default function PostsPage() {
+  return <PostsHero />;
 }

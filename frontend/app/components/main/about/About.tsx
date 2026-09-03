@@ -32,7 +32,11 @@ const STEPS = [
 
 export default function AboutPage() {
   return (
-    <main dir="rtl" className="font-thamaniyah w-full overflow-x-hidden">
+    <main
+      id="about"
+      dir="rtl"
+      className="font-thamaniyah w-full overflow-x-hidden"
+    >
       {/* =====================================================
           HERO
       ====================================================== */}
@@ -100,7 +104,7 @@ export default function AboutPage() {
               "
             >
               <Link
-                href="#"
+                href="/posts"
                 className="
                   inline-flex min-h-14 w-full
                   items-center justify-center
@@ -119,7 +123,7 @@ export default function AboutPage() {
               </Link>
 
               <Link
-                href="#"
+                href="/register"
                 className="
                   inline-flex min-h-14 w-full
                   items-center justify-center

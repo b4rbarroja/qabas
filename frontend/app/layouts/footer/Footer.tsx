@@ -245,6 +245,15 @@ export default function Footer() {
                   سجل معنا
                 </Link>
               </li>
+
+              <li>
+                <Link
+                  href="/login"
+                  className="transition-colors hover:text-accent"
+                >
+                  تسجيل الدخول
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,44 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-
-// بيانات المقالات
-const LATEST_POSTS = [
-  {
-    id: 1,
-    title: "أصالة النص العربي في عصر الذكاء الاصطناعي",
-    excerpt:
-      "كيف نحافظ على الهوية اللغوية والبلاغية للنصوص العربية مع التطور المتسارع لخوارزميات التوليد اللغوي؟",
-    category: "اللغويات والتقنية",
-    date: "٢٨ أغسطس ٢٠٢٦",
-    readTime: "٥ دقائق",
-    image: "/herobg.png",
-    slug: "#",
-  },
-  {
-    id: 2,
-    title: "تطور البنيوية في اللسانيات الحديثة",
-    excerpt:
-      "قراءة نقدية في الانتقال من النظرية التوزيعية إلى النحو التوليدي وتحليل المكونات المباشرة.",
-    category: "لسانيات",
-    date: "٢٥ أغسطس ٢٠٢٦",
-    readTime: "٧ دقائق",
-    image: "/mahbara2.webp",
-    slug: "#",
-  },
-  {
-    id: 3,
-    title: "مناهج البحث العلمي عند علماء المشرق",
-    excerpt:
-      "استعراض لأبرز الأدوات التحليلية التي اعتمدها الجاحظ وابن خلدون في توثيق العلوم وتفنيد الآراء.",
-    category: "تاريخ العلوم",
-    date: "٢٠ أغسطس ٢٠٢٦",
-    readTime: "٦ دقائق",
-    image: "/herobg.png",
-    slug: "#",
-  },
-];
+import { POSTS } from "@/lib/posts";
 
 export default function Hero() {
+  const latestPosts = POSTS.slice(0, 3);
+
   return (
     <main className="font-thamaniyah w-full overflow-x-hidden" dir="rtl">
       {/* =========================
@@ -74,8 +40,8 @@ export default function Hero() {
     "
         >
           {/* =========================
-        TEXT
-    ========================== */}
+              TEXT
+          ========================== */}
           <div
             className="
         order-1 w-full max-w-2xl
@@ -117,7 +83,7 @@ export default function Hero() {
         "
             >
               <Link
-                href="#"
+                href="/posts"
                 className="
             inline-flex min-h-14 w-full items-center justify-center
             rounded-lg bg-background px-6 py-3
@@ -132,7 +98,7 @@ export default function Hero() {
               </Link>
 
               <Link
-                href="#"
+                href="/register"
                 className="
             inline-flex min-h-14 w-full items-center justify-center
             rounded-lg border border-accent
@@ -150,17 +116,13 @@ export default function Hero() {
           </div>
 
           {/* =========================
-        HERO IMAGE
-    ========================== */}
-          {/* =========================
-    HERO IMAGE
-========================== */}
+              HERO IMAGE
+          ========================== */}
           <div
             className="
     order-2 flex w-full
     items-center justify-center
     lg:justify-start
-    
   "
           >
             <div
@@ -224,7 +186,7 @@ export default function Hero() {
             </div>
 
             <Link
-              href="/articles"
+              href="/posts"
               className="
                 w-fit border-b border-transparent pb-1
                 text-sm font-medium text-primary/70
@@ -247,7 +209,7 @@ export default function Hero() {
               xl:gap-8
             "
           >
-            {LATEST_POSTS.map((post) => (
+            {latestPosts.map((post) => (
               <article
                 key={post.id}
                 className="
@@ -262,7 +224,10 @@ export default function Hero() {
     "
               >
                 {/* Image */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl">
+                <Link
+                  href={`/posts/${post.slug}`}
+                  className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl block"
+                >
                   <Image
                     src={post.image}
                     alt={post.title}
@@ -295,7 +260,7 @@ export default function Hero() {
                   >
                     {post.category}
                   </span>
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="flex flex-1 flex-col px-4 pb-5 pt-4 sm:px-5 sm:pb-6">
@@ -326,7 +291,7 @@ export default function Hero() {
         "
                   >
                     <Link
-                      href={post.slug}
+                      href={`/posts/${post.slug}`}
                       className="
             transition-colors
             hover:text-accent
@@ -350,9 +315,9 @@ export default function Hero() {
                   </p>
 
                   {/* Read More */}
-                  <div className="flex justify-end items-center">
+                  <div className="mt-auto flex justify-end items-center pt-3">
                     <Link
-                      href={post.slug}
+                      href={`/posts/${post.slug}`}
                       className="
       inline-flex items-center justify-center
       self-start

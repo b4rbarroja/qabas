@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import Navbar from "./components/nav/Navbar";
-import Footer from "./components/footer/Footer";
+import Navbar from "./layouts/nav/Navbar";
+import Footer from "./layouts/footer/Footer";
 
 const thamaniyah = localFont({
   src: "../public/fonts/woff2/thmanyahserifdisplay-Regular.woff2",
@@ -11,6 +11,7 @@ const thamaniyah = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("http://localhost:3000"),
   title: "مدونة قبس",
   description: "أطلق العنان لقلمك",
 };
