@@ -225,11 +225,11 @@ export default function Hero() {
               >
                 {/* Image */}
                 <Link
-                  href={`/posts/${post.slug}`}
+                  href={`/posts/${post.id}`}
                   className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl block"
                 >
                   <Image
-                    src={post.image}
+                    src={post.image || "/herobg.png"}
                     alt={post.title}
                     fill
                     sizes="
@@ -258,7 +258,7 @@ export default function Hero() {
           sm:text-sm
         "
                   >
-                    {post.category}
+                    {post.hashtags[0] || "مقالات"}
                   </span>
                 </Link>
 
@@ -274,10 +274,10 @@ export default function Hero() {
           sm:text-sm
         "
                   >
-                    <span>{post.date}</span>
+                    <span>{post.createdAt}</span>
 
                     <span className="flex items-center gap-1.5">
-                      {post.readTime}
+                      {post.readTime} دقائق
                     </span>
                   </div>
 
@@ -291,7 +291,7 @@ export default function Hero() {
         "
                   >
                     <Link
-                      href={`/posts/${post.slug}`}
+                      href={`/posts/${post.id}`}
                       className="
             transition-colors
             hover:text-accent
@@ -302,7 +302,7 @@ export default function Hero() {
                     </Link>
                   </h3>
 
-                  {/* Excerpt */}
+                  {/* Description */}
                   <p
                     className="
           line-clamp-3
@@ -311,13 +311,13 @@ export default function Hero() {
           sm:text-base
         "
                   >
-                    {post.excerpt}
+                    {post.description}
                   </p>
 
                   {/* Read More */}
                   <div className="mt-auto flex justify-end items-center pt-3">
                     <Link
-                      href={`/posts/${post.slug}`}
+                      href={`/posts/${post.id}`}
                       className="
       inline-flex items-center justify-center
       self-start

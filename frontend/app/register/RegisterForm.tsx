@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "لسانيات",
@@ -19,15 +20,18 @@ const CATEGORIES = [
 ];
 
 export default function RegisterForm() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    specialization: "",
     bio: "",
     selectedCategories: [] as string[],
     portfolioUrl: "",
+    userImage: "",
     agreeTerms: false,
     agreeOriginality: false,
   });
@@ -35,7 +39,6 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleCategoryToggle = (category: string) => {
@@ -57,7 +60,7 @@ export default function RegisterForm() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -77,12 +80,16 @@ export default function RegisterForm() {
       setErrorMessage("كلمتا المرور غير متطابقتين.");
       return;
     }
-    if (!formData.role.trim()) {
+    if (!formData.specialization.trim()) {
       setErrorMessage("يرجى إدخال المسمى والتخصص الأكاديمي أو المهني.");
       return;
     }
     if (formData.selectedCategories.length === 0) {
       setErrorMessage("يرجى اختيار مجال كتابة واحد على الأقل.");
+      return;
+    }
+    if (formData.userImage.length === 0) {
+      setErrorMessage("يرجى وضع رابط لصورتك الشخصية.");
       return;
     }
     if (!formData.bio.trim()) {
@@ -95,88 +102,36 @@ export default function RegisterForm() {
     }
 
     setIsSubmitting(true);
-    // Simulate server action
-    setTimeout(() => {
+
+    try {
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        alert(errorData?.error || "Please try again, error happened!");
+        setIsSubmitting(false);
+        return;
+      }
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Network or script error:", error);
+      alert("Could not connect to the server. Please check your connection.");
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 1200);
+    }
   };
-
-  if (isSubmitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="mx-auto my-12 w-full max-w-xl rounded-2xl border border-primary/10 bg-background p-8 text-center shadow-xl sm:p-10"
-      >
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
-          <svg
-            className="h-10 w-10"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-
-        <h2 className="text-2xl font-bold text-primary sm:text-3xl">
-          أهلاً بك في قبس، {formData.name}!
-        </h2>
-
-        <p className="mt-4 text-sm leading-relaxed text-dark/75 sm:text-base">
-          تم إنشاء حساب الكاتب الخاص بك بنجاح. يمكنك الآن الدخول إلى لوحة التحكم
-          والبدء في تحرير مقالاتك وتجهيزها للاعتماد والنشر.
-        </p>
-
-        {/* Preview of author badge */}
-        <div className="mt-6 rounded-xl border border-primary/10 bg-primary/5 p-5 text-right">
-          <span className="text-xs font-bold text-accent">
-            بطاقتك كما ستظهر في المقالات:
-          </span>
-          <div className="mt-3 flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-light font-bold">
-              {formData.name.charAt(0)}
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-primary">{formData.name}</h3>
-              <p className="text-xs text-primary/60">{formData.role}</p>
-            </div>
-          </div>
-          <p className="mt-2.5 text-xs text-dark/80 line-clamp-2">
-            {formData.bio}
-          </p>
-        </div>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-light shadow-md transition-all hover:bg-accent"
-          >
-            تسجيل الدخول الآن
-          </Link>
-          <Link
-            href="/posts"
-            className="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-6 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary/5"
-          >
-            تصفح المقالات
-          </Link>
-        </div>
-      </motion.div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-[1300px] px-4 py-10 sm:px-6 sm:py-14 md:px-10 lg:px-12">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
-        {/* =========================================================
-            FORM COLUMN (7 cols)
-        ========================================================== */}
+        {/* FORM COLUMN */}
         <div className="lg:col-span-7">
           <div className="rounded-2xl border border-primary/10 bg-background p-6 shadow-sm sm:p-8 md:p-10">
             {/* Header */}
@@ -188,8 +143,8 @@ export default function RegisterForm() {
                 إنشاء حساب كاتب جديد
               </h1>
               <p className="mt-2 text-xs leading-relaxed text-dark/70 sm:text-sm">
-                شارك خلاصة فكرك وبحوثك في منصة قبس، ووثق مقالاتك بصفحة كاتب مخصصة
-                تظهر مع كل تدوينة.
+                شارك خلاصة فكرك وبحوثك في منصة قبس، ووثق مقالاتك بصفحة كاتب
+                مخصصة تظهر مع كل تدوينة.
               </p>
             </div>
 
@@ -291,7 +246,10 @@ export default function RegisterForm() {
                         placeholder="••••••••"
                         value={formData.password}
                         onChange={(e) =>
-                          setFormData({ ...formData, password: e.target.value })
+                          setFormData({
+                            ...formData,
+                            password: e.target.value,
+                          })
                         }
                         className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
                       />
@@ -353,22 +311,25 @@ export default function RegisterForm() {
                 </h2>
 
                 <div className="space-y-4">
-                  {/* Role / Specialization */}
+                  {/* Specialization */}
                   <div>
                     <label
-                      htmlFor="role"
+                      htmlFor="specialization"
                       className="mb-1.5 block text-xs font-semibold text-primary sm:text-sm"
                     >
                       المسمى والتخصص الأكاديمي أو المهني *
                     </label>
                     <input
-                      id="role"
+                      id="specialization"
                       type="text"
                       required
                       placeholder="مثال: أستاذ اللسانيات المقارنة / باحث في معالجة اللغات الطبيعية / مترجم أدبي"
-                      value={formData.role}
+                      value={formData.specialization}
                       onChange={(e) =>
-                        setFormData({ ...formData, role: e.target.value })
+                        setFormData({
+                          ...formData,
+                          specialization: e.target.value,
+                        })
                       }
                       className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
                     />
@@ -448,6 +409,28 @@ export default function RegisterForm() {
                       className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
                     />
                   </div>
+                  <div>
+                    <label
+                      htmlFor="userImage"
+                      className="mb-1.5 block text-xs font-semibold text-primary sm:text-sm"
+                    >
+                      ضع رابطا لصورتك الشخصية
+                    </label>
+                    <input
+                      id="userImage"
+                      type="url"
+                      dir="ltr"
+                      placeholder="https://yourimage.com"
+                      value={formData.userImage}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          userImage: e.target.value,
+                        })
+                      }
+                      className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -480,7 +463,10 @@ export default function RegisterForm() {
                     type="checkbox"
                     checked={formData.agreeTerms}
                     onChange={(e) =>
-                      setFormData({ ...formData, agreeTerms: e.target.checked })
+                      setFormData({
+                        ...formData,
+                        agreeTerms: e.target.checked,
+                      })
                     }
                     className="mt-1 h-4 w-4 rounded border-primary/20 accent-primary"
                   />
@@ -531,9 +517,7 @@ export default function RegisterForm() {
           </div>
         </div>
 
-        {/* =========================================================
-            PREVIEW & INFO COLUMN (5 cols)
-        ========================================================== */}
+        {/* PREVIEW & INFO COLUMN */}
         <div className="space-y-6 lg:col-span-5">
           {/* Live Preview Card */}
           <div className="rounded-2xl border border-primary/10 bg-primary/5 p-6 shadow-sm sm:p-7">
@@ -551,7 +535,7 @@ export default function RegisterForm() {
               قبس:
             </p>
 
-            {/* Author box mockup identical to post slug */}
+            {/* Author box mockup */}
             <div className="rounded-xl border border-primary/10 bg-background p-5 shadow-xs">
               <div className="flex items-center gap-3.5">
                 <div className="relative flex h-13 w-13 shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary text-light font-bold text-lg shadow-sm">
@@ -573,7 +557,7 @@ export default function RegisterForm() {
                     {formData.name || "اسم الكاتب / الباحث"}
                   </h3>
                   <p className="truncate text-xs font-medium text-primary/60">
-                    {formData.role || "المسمى والتخصص الأكاديمي"}
+                    {formData.specialization || "المسمى والتخصص الأكاديمي"}
                   </p>
                 </div>
               </div>

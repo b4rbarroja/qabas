@@ -15,10 +15,14 @@ function calculateReadTime(content: string) {
 router.post("/", authMiddleWare, async (req: Request, res: Response) => {
   try {
     const { title, description, content, hashtags, imageUrl } = req.body;
+
+    // الاعتماد على التوكن لمعرفة صاحب المقال
     const userId = req.user?.uid;
 
     if (!title || !content || !userId) {
-      return res.status(400).json({ error: "يرجى إرسال العنوان والمحتوى" });
+      return res.status(400).json({
+        error: "يرجى إرسال العنوان والمحتوى",
+      });
     }
 
     const readTime = calculateReadTime(content);
@@ -31,7 +35,7 @@ router.post("/", authMiddleWare, async (req: Request, res: Response) => {
         hashtags: hashtags || [],
         readTime,
         imageUrl,
-        authorId: userId, // مطابق لـ authorId في الـ Schema
+        authorId: userId,
         userId: userId,
       },
       include: {
@@ -56,7 +60,7 @@ router.post("/", authMiddleWare, async (req: Request, res: Response) => {
   }
 });
 
-// 2. جلب جميع المقالات (شغال تمام لأن createdAt موجود في الـ Schema)
+// 2. جلب جميع المقالات
 router.get("/", async (req: Request, res: Response) => {
   try {
     const posts = await prisma.post.findMany({
@@ -85,10 +89,10 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// 3. جلب مقال محدد (شغال بـ as string لأن الـ id نوعه String)
+// 3. جلب مقال محدد بواسطة الـ ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const id = req.params.id as string; // تحويل النوع صراحة لمنع الخطأ
 
     const post = await prisma.post.findUnique({
       where: { id },
@@ -112,20 +116,22 @@ router.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(post);
   } catch (error) {
     console.error("Error fetching post:", error);
-    return res
-      .status(500)
-      .json({ error: "حدث خطأ في السيرفر أثناء جلب المقال" });
+    return res.status(500).json({
+      error: "حدث خطأ في السيرفر أثناء جلب المقال",
+    });
   }
 });
 
-// 4. تعديل مقال
+// 4. تعديل مقال (PUT)
 router.put("/:id", authMiddleWare, async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const id = req.params.id as string; // تحويل النوع صراحة لمنع الخطأ
     const { title, description, content, hashtags, imageUrl } = req.body;
     const currentUserId = req.user?.uid;
 
-    const existingPost = await prisma.post.findUnique({ where: { id } });
+    const existingPost = await prisma.post.findUnique({
+      where: { id },
+    });
 
     if (!existingPost) {
       return res.status(404).json({ error: "المقال غير موجود" });
@@ -171,13 +177,15 @@ router.put("/:id", authMiddleWare, async (req: Request, res: Response) => {
   }
 });
 
-// 5. حذف مقال
+// 5. حذف مقال (DELETE)
 router.delete("/:id", authMiddleWare, async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const id = req.params.id as string; // تحويل النوع صراحة لمنع الخطأ
     const currentUserId = req.user?.uid;
 
-    const existingPost = await prisma.post.findUnique({ where: { id } });
+    const existingPost = await prisma.post.findUnique({
+      where: { id },
+    });
 
     if (!existingPost) {
       return res.status(404).json({ error: "المقال غير موجود" });
@@ -187,7 +195,9 @@ router.delete("/:id", authMiddleWare, async (req: Request, res: Response) => {
       return res.status(403).json({ error: "غير مصرح لك بحذف هذا المقال" });
     }
 
-    await prisma.post.delete({ where: { id } });
+    await prisma.post.delete({
+      where: { id },
+    });
 
     return res.status(200).json({ message: "تم حذف المقال بنجاح" });
   } catch (error) {

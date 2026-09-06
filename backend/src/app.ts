@@ -1,17 +1,40 @@
-import express, { type Express, type Request, type Response } from "express";
-import messagesRouter from "../src/routes/contact.js";
+import express, { type Express } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
-const PORT = 3000;
+// استيراد الـ Routers
+import messagesRouter from "../src/routes/contact.js";
+import registerRouter from "../src/routes/register.js";
+import usersRouter from "../src/routes/users.js";
+import loginRouter from "../src/routes/login.js";
+import logoutRouter from "../src/routes/logout.js";
+import postRouter from "../src/routes/post.js";
+import currentUser from "../src/routes/me.js";
+import profileRouter from "../src/routes/profile.js";
+
+const PORT = 5000;
 const app: Express = express();
 
-// using json
 app.use(express.json());
-app.use(cors());
-// fetch Messages Route
-app.use("/api/messages", messagesRouter);
+app.use(cookieParser());
 
-// listeing the port
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
+
+app.use("/api/messages", messagesRouter);
+app.use("/api/register", registerRouter);
+app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
+
+app.use("/api/users", usersRouter);
+app.use("/api/posts", postRouter);
+app.use("/api/auth/me", currentUser);
+app.use("/api/auth/profile", profileRouter);
+
 app.listen(PORT, () => {
-  console.log(`listening now on ${PORT}`);
+  console.log(`Backend server is running on http://localhost:${PORT}`);
 });

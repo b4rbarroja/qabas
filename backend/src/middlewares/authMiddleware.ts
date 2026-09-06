@@ -7,19 +7,22 @@ import express, {
 import jwt from "jsonwebtoken";
 
 const authMiddleWare = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).json({ error: "access denied" });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    req.message = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      uid: string;
+      role: string;
+    };
+
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(500).json(`authorization error:${error} `);
+    res.status(401).json(`authorization error:${error} `);
   }
 };
 

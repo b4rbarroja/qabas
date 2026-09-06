@@ -19,3 +19,39 @@ model Message {
   subject String
   message String
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String   @unique
+  password           String
+  role               Role     @default(USER)
+  bio                String?
+  specialization     String?
+  selectedCategories String[] @default([])
+  portfolioUrl       String?
+  agreeTerms         Boolean  @default(false)
+  agreeOriginality   Boolean  @default(false)
+  posts              Post[]
+  userImage          String
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  content     String
+  hashtags    String[]
+  readTime    Int
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}

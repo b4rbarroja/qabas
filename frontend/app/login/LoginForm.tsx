@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -13,8 +14,8 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -28,11 +29,28 @@ export default function LoginForm() {
     }
 
     setIsSubmitting(true);
-    // Simulate login
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 1000);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+        credentials: "include",
+      });
+      if (!response.status) {
+        alert("Please try again, error happened!");
+      }
+      router.push("/dashboard");
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
   };
 
   if (isSuccess) {
@@ -58,7 +76,9 @@ export default function LoginForm() {
           </svg>
         </div>
 
-        <h2 className="text-2xl font-bold text-primary">تم تسجيل الدخول بنجاح!</h2>
+        <h2 className="text-2xl font-bold text-primary">
+          تم تسجيل الدخول بنجاح!
+        </h2>
         <p className="mt-3 text-sm text-dark/75">
           أهلاً بعودتك، يتم نقلك إلى لوحة الكاتب الرئيسية...
         </p>
@@ -80,7 +100,10 @@ export default function LoginForm() {
       <div className="w-full rounded-2xl border border-primary/10 bg-background p-6 shadow-md sm:p-8 md:p-10">
         {/* Top brand */}
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-block transition-transform hover:scale-105">
+          <Link
+            href="/"
+            className="inline-block transition-transform hover:scale-105"
+          >
             <Image
               src="/blackQabas2.png"
               alt="قبس"
