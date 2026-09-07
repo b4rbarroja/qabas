@@ -29,7 +29,7 @@ interface PostPageProps {
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = await params;
 
-  const response = await fetch(`http://localhost:3000/api/posts/${id}`, {
+  const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
     cache: "no-store",
   });
 

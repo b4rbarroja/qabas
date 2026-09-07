@@ -11,17 +11,14 @@ import {
   Edit3,
   Settings,
 } from "lucide-react";
-
 import { useEffect, useState } from "react";
-
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function UserDashboard() {
   interface User {
     uid: string;
-
     role: string;
-
     name?: string;
   }
 
@@ -32,23 +29,80 @@ export default function UserDashboard() {
   >("my-posts");
 
   const [user, setUser] = useState<User | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    imageUrl: "",
+    hashtags: "",
+    content: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formattedHashtags = formData.hashtags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    const postPayload = {
+      title: formData.title,
+      description: formData.description,
+      imageUrl: formData.imageUrl,
+      content: formData.content,
+      hashtags: formattedHashtags,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(postPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "فشل نشر المقال");
+      }
+
+      const newPost = await response.json();
+      setPosts((prev) => [newPost, ...prev]);
+      setFormData({
+        title: "",
+        description: "",
+        imageUrl: "",
+        hashtags: "",
+        content: "",
+      });
+      setActiveTab("my-posts");
+    } catch (error: any) {
+      alert(`خطأ: ${error.message || error}`);
+    }
+  };
 
   useEffect(() => {
     const cookieCheck = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/auth/me", {
           method: "GET",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           credentials: "include",
         });
-
         if (response.ok) {
           const data = await response.json();
-
           setUser(data.user);
         } else {
           router.push("/login");
@@ -59,6 +113,33 @@ export default function UserDashboard() {
     };
 
     cookieCheck();
+  }, [router]);
+
+  useEffect(() => {
+    const findMyPosts = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/posts/my-posts",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("فشل جلب المقالات");
+        }
+        const data = await response.json();
+        setPosts(data);
+        console.log(data);
+      } catch (error) {
+        alert(`Error: ${error}`);
+      }
+    };
+    findMyPosts();
   }, [router]);
 
   const handleLogOut = async () => {
@@ -80,37 +161,6 @@ export default function UserDashboard() {
       alert(error);
     }
   };
-
-  const myPosts = [
-    {
-      id: 1,
-
-      title: "مناهج البحث العلمي عند علماء المشرق",
-
-      date: "20 أغسطس 2026",
-
-      category: "تاريخ العلوم",
-
-      readTime: "6 دقائق",
-
-      image: "/api/placeholder/400/250",
-    },
-
-    {
-      id: 2,
-
-      title: "تأثير الترجمة الذكية على البلاغة العربية",
-
-      date: "15 أغسطس 2026",
-
-      category: "ترجمة ونقد",
-
-      readTime: "4 دقائق",
-
-      image: "/api/placeholder/400/250",
-    },
-  ];
-
   return (
     <div
       dir="rtl"
@@ -185,15 +235,14 @@ export default function UserDashboard() {
           </button>
 
           <button
-            onClick={() => setActiveTab("explore")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+            onClick={() => router.push("/posts")}
+            className={` cursor-pointer w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
               activeTab === "explore"
                 ? "bg-black text-white shadow-sm"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
             <Compass size={18} />
-
             <span>تصفح المقالات</span>
           </button>
         </aside>
@@ -240,17 +289,25 @@ export default function UserDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {myPosts.map((post) => (
+                  {posts.map((post) => (
                     <div
                       key={post.id}
                       className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center text-xs text-gray-500">
                         <span className="bg-black text-white px-2 py-0.5 rounded text-[10px]">
-                          {post.category}
+                          {post.hashtags && post.hashtags.length > 0
+                            ? post.hashtags[0]
+                            : "عام"}
                         </span>
 
-                        <span>{post.date}</span>
+                        <span>
+                          {post.createdAt
+                            ? new Date(post.createdAt).toLocaleDateString(
+                                "ar-EG",
+                              )
+                            : ""}
+                        </span>
                       </div>
 
                       <div className="p-5">
@@ -259,7 +316,7 @@ export default function UserDashboard() {
                         </h3>
 
                         <p className="text-xs text-gray-500 mb-4">
-                          وقت القراءة: {post.readTime}
+                          وقت القراءة: {post.readTime || 0} دقائق
                         </p>
 
                         <div className="flex gap-2 border-t border-gray-100 pt-3">
@@ -286,59 +343,81 @@ export default function UserDashboard() {
                   نشر مقالة جديدة
                 </h2>
 
-                <form
-                  className="space-y-4"
-                  onSubmit={(e) => e.preventDefault()}
-                >
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  {/* عنوان المقال */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      عنوان المقال
+                      عنوان المقال <span className="text-red-500">*</span>
                     </label>
-
                     <input
                       type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
                       placeholder="أدخل عنوان المقال هنا..."
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
                     />
                   </div>
 
+                  {/* الوصف المختصر */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      وصف قصير للمقال (Description)
+                    </label>
+                    <input
+                      type="text"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="ملخص وجيز يظهر في بطاقة المقال..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* صورة الغلاف */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        التصنيف
+                        صورة الغلاف (رابط URL)
                       </label>
-
-                      <select className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5">
-                        <option>تاريخ العلوم</option>
-
-                        <option>لسانيات</option>
-
-                        <option>ترجمة ونقد</option>
-
-                        <option>الذكاء الاصطناعي</option>
-                      </select>
+                      <input
+                        type="url"
+                        name="imageUrl"
+                        value={formData.imageUrl}
+                        onChange={handleChange}
+                        placeholder="https://example.com/image.jpg"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                      />
                     </div>
 
+                    {/* الهاشتاجات */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        صورة الغلاف (رابط)
+                        الوسوم (Hashtags)
                       </label>
-
                       <input
                         type="text"
-                        placeholder="https://..."
+                        name="hashtags"
+                        value={formData.hashtags}
+                        onChange={handleChange}
+                        placeholder="لسانيات, برمجة, ذكاء_اصطناعي (افصل بينها بفصلة)"
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
                       />
                     </div>
                   </div>
 
+                  {/* محتوى المقال */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      محتوى المقال
+                      محتوى المقال <span className="text-red-500">*</span>
                     </label>
-
                     <textarea
                       rows={8}
+                      name="content"
+                      value={formData.content}
+                      onChange={handleChange}
+                      required
                       placeholder="اكتب نص المقال هنا..."
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 resize-none"
                     ></textarea>
@@ -346,51 +425,11 @@ export default function UserDashboard() {
 
                   <button
                     type="submit"
-                    className="bg-black text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-800 transition-colors"
+                    className="bg-black text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-800 transition-colors cursor-pointer"
                   >
                     نشر المقال الآن
                   </button>
                 </form>
-              </div>
-            )}
-
-            {/* تبويب: تصفح المقالات */}
-
-            {activeTab === "explore" && (
-              <div>
-                <h2 className="text-xl font-bold mb-6 border-b border-gray-100 pb-4">
-                  تصفح جميع المقالات
-                </h2>
-
-                <div className="space-y-4">
-                  {[1, 2, 3].map((item) => (
-                    <div
-                      key={item}
-                      className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-all"
-                    >
-                      <div className="w-full sm:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0"></div>
-
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                          <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">
-                            لسانيات
-                          </span>
-
-                          <span>• 25 أغسطس 2026</span>
-                        </div>
-
-                        <h3 className="font-bold text-base mb-1">
-                          تطور البنيوية في اللسانيات الحديثة
-                        </h3>
-
-                        <p className="text-xs text-gray-600 line-clamp-2">
-                          قراءة نقدية في الانتقال من النظرية التوزيعية إلى النحو
-                          التوليدي...
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
 
