@@ -10,6 +10,7 @@ import {
   Trash2,
   Edit3,
   Settings,
+  Upload,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -33,7 +34,6 @@ export default function UserDashboard() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    imageUrl: "",
     hashtags: "",
     content: "",
   });
@@ -44,6 +44,12 @@ export default function UserDashboard() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,8 +67,6 @@ export default function UserDashboard() {
     postPayload.append("hashtags", JSON.stringify(formattedHashtags));
     if (imageFile) {
       postPayload.append("image", imageFile);
-    } else if (formData.imageUrl) {
-      postPayload.append("imageUrl", formData.imageUrl);
     }
 
     try {
@@ -82,7 +86,6 @@ export default function UserDashboard() {
       setFormData({
         title: "",
         description: "",
-        imageUrl: "",
         hashtags: "",
         content: "",
       });
@@ -136,7 +139,6 @@ export default function UserDashboard() {
         }
         const data = await response.json();
         setPosts(data);
-        console.log(data);
       } catch (error) {
         alert(`Error: ${error}`);
       }
@@ -163,13 +165,13 @@ export default function UserDashboard() {
       alert(error);
     }
   };
+
   return (
     <div
       dir="rtl"
       className="min-h-screen bg-[#f4f4f4] font-thamaniyah text-[#1a1a1a] font-sans"
     >
       {/* الشريط العلوي - Header */}
-
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -188,7 +190,6 @@ export default function UserDashboard() {
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-black px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <Settings size={16} />
-
               <span>إعدادات الحساب</span>
             </button>
 
@@ -197,7 +198,6 @@ export default function UserDashboard() {
               onClick={handleLogOut}
             >
               <LogOut size={16} />
-
               <span>تسجيل الخروج</span>
             </button>
           </div>
@@ -205,10 +205,8 @@ export default function UserDashboard() {
       </header>
 
       {/* المحتوى الرئيسي - Main Layout */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
         {/* القائمة الجانبية - Sidebar Navigation */}
-
         <aside className="w-full md:w-64 space-y-2">
           <button
             onClick={() => setActiveTab("my-posts")}
@@ -219,7 +217,6 @@ export default function UserDashboard() {
             }`}
           >
             <BookOpen size={18} />
-
             <span>مقالاتي</span>
           </button>
 
@@ -232,7 +229,6 @@ export default function UserDashboard() {
             }`}
           >
             <PenTool size={18} />
-
             <span>نشر مقالة جديدة</span>
           </button>
 
@@ -250,10 +246,8 @@ export default function UserDashboard() {
         </aside>
 
         {/* منطقة عرض المحتوى - Content Area */}
-
         <main className="flex-1 space-y-6">
           {/* رسالة الترحيب بالمستخدم */}
-
           {user && (
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
               <div>
@@ -274,7 +268,6 @@ export default function UserDashboard() {
 
           <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
             {/* تبويب: مقالاتي */}
-
             {activeTab === "my-posts" && (
               <div>
                 <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
@@ -285,7 +278,6 @@ export default function UserDashboard() {
                     className="flex items-center gap-1.5 bg-black text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-800 transition-colors"
                   >
                     <Plus size={16} />
-
                     <span>كتابة مقال</span>
                   </button>
                 </div>
@@ -338,7 +330,6 @@ export default function UserDashboard() {
             )}
 
             {/* تبويب: نشر مقالة */}
-
             {activeTab === "create" && (
               <div>
                 <h2 className="text-xl font-bold mb-6 border-b border-gray-100 pb-4">
@@ -378,19 +369,24 @@ export default function UserDashboard() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* صورة الغلاف */}
+                    {/* رفع صورة الغلاف من الجهاز */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        صورة الغلاف (رابط URL)
+                        صورة الغلاف (ملف من جهازك)
                       </label>
-                      <input
-                        type="url"
-                        name="imageUrl"
-                        value={formData.imageUrl}
-                        onChange={handleChange}
-                        placeholder="https://example.com/image.jpg"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
-                      />
+                      <div className="relative border border-gray-200 rounded-xl p-2 bg-white flex items-center gap-3">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                        />
+                      </div>
+                      {imageFile && (
+                        <p className="text-xs text-green-600 mt-1 font-medium">
+                          ✓ تم اختيار: {imageFile.name}
+                        </p>
+                      )}
                     </div>
 
                     {/* الهاشتاجات */}
@@ -436,7 +432,6 @@ export default function UserDashboard() {
             )}
 
             {/* تبويب: إعدادات الحساب */}
-
             {activeTab === "settings" && (
               <div>
                 <h2 className="text-xl font-bold mb-6 border-b border-gray-100 pb-4">
