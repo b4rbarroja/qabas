@@ -2,25 +2,24 @@ import express, { type Express } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-// استيراد الـ Routers
-import messagesRouter from "../src/routes/contact.js";
-import registerRouter from "../src/routes/register.js";
-import usersRouter from "../src/routes/users.js";
-import loginRouter from "../src/routes/login.js";
-import logoutRouter from "../src/routes/logout.js";
-import postRouter from "../src/routes/post.js";
-import currentUser from "../src/routes/me.js";
-import profileRouter from "../src/routes/profile.js";
+import messagesRouter from "./routes/contact.js";
+import registerRouter from "./routes/register.js";
+import usersRouter from "./routes/users.js";
+import loginRouter from "./routes/login.js";
+import logoutRouter from "./routes/logout.js";
+import postRouter from "./routes/post.js";
+import currentUser from "./routes/me.js";
+import profileRouter from "./routes/profile.js";
 
-const PORT = 5000;
 const app: Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use("/uploads", express.static("uploads"));
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
   }),
 );
@@ -35,6 +34,11 @@ app.use("/api/posts", postRouter);
 app.use("/api/auth/me", currentUser);
 app.use("/api/auth/profile", profileRouter);
 
-app.listen(PORT, () => {
-  console.log(`Backend server is running on http://localhost:${PORT}`);
-});
+export default app;
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Backend server running on http://localhost:${PORT}`);
+  });
+}

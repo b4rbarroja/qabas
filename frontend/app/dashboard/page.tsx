@@ -7,10 +7,11 @@ import {
   UserCheck,
   LogOut,
   Plus,
-  Trash2,
+  XCircle,
   Edit3,
   Settings,
   Upload,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,16 @@ export default function UserDashboard() {
     content: "",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
+
+  // حالات مودال التعديل (Edit Modal State)
+  const [editingPost, setEditingPost] = useState<any | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    hashtags: "",
+    content: "",
+  });
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -96,6 +107,98 @@ export default function UserDashboard() {
     }
   };
 
+  // دالة الحذف
+  const handleDelete = async (postId: string) => {
+    const confirmDelete = window.confirm(
+      "هل أنت تأكد من رغبتك في حذف هذا المقال؟",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/posts/${postId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || errorData.error || "فشل حذف المقال",
+        );
+      }
+
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    } catch (error: any) {
+      alert(`خطأ أثناء الحذف: ${error.message || error}`);
+    }
+  };
+
+  // فتح نافذة التعديل وتعبئة البيانات القائمة
+  const handleOpenEditModal = (post: any) => {
+    setEditingPost(post);
+    setEditFormData({
+      title: post.title || "",
+      description: post.description || "",
+      hashtags: Array.isArray(post.hashtags) ? post.hashtags.join(", ") : "",
+      content: post.content || "",
+    });
+    setEditImageFile(null);
+  };
+
+  // إرسال طلب التعديل
+  const handleUpdatePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPost) return;
+
+    const formattedHashtags = editFormData.hashtags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    const updatePayload = new FormData();
+    updatePayload.append("title", editFormData.title);
+    updatePayload.append("description", editFormData.description);
+    updatePayload.append("content", editFormData.content);
+    updatePayload.append("hashtags", JSON.stringify(formattedHashtags));
+    if (editImageFile) {
+      updatePayload.append("image", editImageFile);
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/posts/${editingPost.id}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          body: updatePayload,
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "فشل تحديث المقال");
+      }
+
+      const updatedPost = await response.json();
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === editingPost.id ? { ...p, ...updatedPost } : p,
+        ),
+      );
+
+      setEditingPost(null);
+    } catch (error: any) {
+      alert(`خطأ أثناء التعديل: ${error.message || error}`);
+    }
+  };
+
   useEffect(() => {
     const cookieCheck = async () => {
       try {
@@ -150,11 +253,9 @@ export default function UserDashboard() {
     try {
       const response = await fetch("http://localhost:5000/api/logout", {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         credentials: "include",
       });
 
@@ -251,17 +352,7 @@ export default function UserDashboard() {
           {user && (
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold">
-                  مرحباً بك مجدداً، {user.name || "عضو قبس"} 👋
-                </h1>
-
-                <p className="text-sm text-gray-500 mt-1">
-                  معرّف الحساب:{" "}
-                  <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">
-                    {user.uid}
-                  </span>{" "}
-                  | الصلاحية: {user.role}
-                </p>
+                <h1 className="text-xl font-bold">مرحباً بك في قبس! 👋</h1>
               </div>
             </div>
           )}
@@ -314,12 +405,19 @@ export default function UserDashboard() {
                         </p>
 
                         <div className="flex gap-2 border-t border-gray-100 pt-3">
-                          <button className="flex-1 flex items-center justify-center gap-1.5 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors">
+                          <button
+                            onClick={() => handleOpenEditModal(post)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                          >
                             <Edit3 size={14} /> تعديل
                           </button>
 
-                          <button className="flex items-center justify-center p-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                            <Trash2 size={14} />
+                          <button
+                            title="حذف المقال"
+                            className="flex items-center justify-center p-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                            onClick={() => handleDelete(post.id)}
+                          >
+                            <XCircle size={16} />
                           </button>
                         </div>
                       </div>
@@ -337,7 +435,6 @@ export default function UserDashboard() {
                 </h2>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
-                  {/* عنوان المقال */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       عنوان المقال <span className="text-red-500">*</span>
@@ -353,7 +450,6 @@ export default function UserDashboard() {
                     />
                   </div>
 
-                  {/* الوصف المختصر */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       وصف قصير للمقال (Description)
@@ -369,7 +465,6 @@ export default function UserDashboard() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* رفع صورة الغلاف من الجهاز */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         صورة الغلاف (ملف من جهازك)
@@ -389,7 +484,6 @@ export default function UserDashboard() {
                       )}
                     </div>
 
-                    {/* الهاشتاجات */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         الوسوم (Hashtags)
@@ -405,7 +499,6 @@ export default function UserDashboard() {
                     </div>
                   </div>
 
-                  {/* محتوى المقال */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       محتوى المقال <span className="text-red-500">*</span>
@@ -479,6 +572,126 @@ export default function UserDashboard() {
           </div>
         </main>
       </div>
+
+      {/* نافذة التعديل المنبثقة - Edit Post Modal */}
+      {editingPost && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+              <h3 className="text-xl font-bold">تعديل المقال</h3>
+              <button
+                onClick={() => setEditingPost(null)}
+                className="text-gray-400 hover:text-black p-1 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdatePost} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  عنوان المقال <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.title}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, title: e.target.value })
+                  }
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  الوصف القصير (Description)
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.description}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    تحديث صورة الغلاف (اختياري)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setEditImageFile(e.target.files[0]);
+                      }
+                    }}
+                    className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    الوسوم (Hashtags)
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.hashtags}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        hashtags: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  محتوى المقال <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={6}
+                  value={editFormData.content}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      content: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 resize-none"
+                ></textarea>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setEditingPost(null)}
+                  className="px-5 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="bg-black text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+                >
+                  حفظ التعديلات
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

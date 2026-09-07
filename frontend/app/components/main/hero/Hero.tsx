@@ -1,10 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
-import { POSTS } from "@/lib/posts";
 
 export default function Hero() {
-  const latestPosts = POSTS.slice(0, 3);
-
+  const pillars = [
+    {
+      number: "01",
+      title: "دقة ومراجعة المحتوى",
+      description:
+        "نحرص على تقديم مقالات علمية وفكرية موثوقة المصادر وخالية من الصياغة الآلية السطحية لضمان جودة المعلومة.",
+    },
+    {
+      number: "02",
+      title: "تنسيق مريح للقراءة",
+      description:
+        "اعتماد تنسيق Markdown وهيكلة بصرية مريحة للعين تساعدك على استيعاب العلوم المعقدة بأبسط صورة ممكنة.",
+    },
+    {
+      number: "03",
+      title: "مجتمع معرفي مفتوح",
+      description:
+        "مساحة ميسرة للكتّاب والباحثين لنشر إبداعاتهم في مجالات البرمجة، الفلسفة، اللغات، والعلوم الإنسانية.",
+    },
+  ];
   return (
     <main className="font-thamaniyah w-full overflow-x-hidden" dir="rtl">
       {/* =========================
@@ -153,189 +170,68 @@ export default function Hero() {
           </div>
         </div>
       </section>
-
-      {/* =========================
-          LATEST POSTS
-      ========================== */}
-      <section className="w-full bg-background px-5 py-16 sm:px-8 sm:py-20 md:px-12 lg:px-16 xl:px-24">
+      <section
+        className="w-full bg-background px-5 py-20 font-thamaniyah sm:px-8 sm:py-24 md:px-12 lg:px-16 xl:px-24"
+        dir="rtl"
+      >
         <div className="mx-auto w-full max-w-[1600px]">
-          {/* Section Header */}
-          <div
-            className="
-              mb-10 flex flex-col gap-5
-              border-b border-primary/10 pb-6
-              sm:mb-12
-              md:flex-row md:items-end md:justify-between
-            "
-          >
+          {/* Header */}
+          <div className="mb-14 flex flex-col gap-4 border-b border-primary/10 pb-8 md:flex-row md:items-end md:justify-between">
             <div>
               <span className="mb-2 block text-sm font-semibold tracking-wider text-accent sm:text-base">
-                جديد المنصة
+                لماذا تقرأ وتكتب معنا؟
               </span>
-
-              <h2
-                className="
-                  text-3xl font-bold leading-tight text-primary
-                  sm:text-4xl
-                  md:text-5xl
-                  lg:text-6xl
-                "
-              >
-                أحدث المقالات
+              <h2 className="text-3xl font-bold leading-tight text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+                ركائز منصة قبس
               </h2>
+            </div>
+            <p className="max-w-md text-sm leading-[1.8] text-primary/70 sm:text-base">
+              نسعى لإنشاء بيئة معرفية عربية تجمع بين رصانة الطرح وجمال العرض
+              لتثري المحتوى العربي.
+            </p>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 sm:gap-8">
+            {pillars.map((pillar) => (
+              <div
+                key={pillar.number}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-primary/10 bg-primary/5 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:bg-primary/10 hover:shadow-xl"
+              >
+                <div>
+                  <span className="mb-6 block font-mono text-3xl font-bold text-accent/80 sm:text-4xl">
+                    {pillar.number}
+                  </span>
+
+                  <h3 className="mb-3 text-xl font-bold text-primary sm:text-2xl">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="text-sm leading-[2] text-primary/70 sm:text-base">
+                    {pillar.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Call To Action Banner */}
+          <div className="mt-16 flex flex-col items-center justify-between gap-6 rounded-2xl border border-primary/10 bg-primary p-8 text-center text-light sm:p-12 md:flex-row md:text-right">
+            <div>
+              <h3 className="text-2xl font-bold sm:text-3xl">
+                هل لديك معرفة ترغب في مشاركتها؟
+              </h3>
+              <p className="mt-2 text-sm text-light/70 sm:text-base">
+                انضم إلى نخبة الكُتّاب وساهم في إثراء المحتوى العربي اليوم.
+              </p>
             </div>
 
             <Link
-              href="/posts"
-              className="
-                w-fit border-b border-transparent pb-1
-                text-sm font-medium text-primary/70
-                transition-colors
-                hover:border-accent hover:text-accent
-                sm:text-base md:text-lg
-              "
+              href="/register"
+              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-light px-7 py-3.5 text-sm font-bold text-dark transition-all duration-200 hover:bg-accent/80 hover:shadow-lg"
             >
-              عرض الكل
+              ابدأ التدوين الآن
             </Link>
-          </div>
-
-          {/* Posts Grid */}
-          <div
-            className="
-              grid grid-cols-1 gap-6
-              sm:gap-7
-              md:grid-cols-2
-              lg:grid-cols-3
-              xl:gap-8
-            "
-          >
-            {latestPosts.map((post) => (
-              <article
-                key={post.id}
-                className="
-      group flex h-full flex-col overflow-hidden
-      rounded-2xl
-      bg-background
-      border border-primary/10
-      shadow-sm
-      transition-all duration-300
-      hover:-translate-y-1
-      hover:shadow-xl
-    "
-              >
-                {/* Image */}
-                <Link
-                  href={`/posts/${post.id}`}
-                  className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl block"
-                >
-                  <Image
-                    src={post.image || "/herobg.png"}
-                    alt={post.title}
-                    fill
-                    sizes="
-          (max-width: 640px) 100vw,
-          (max-width: 1024px) 50vw,
-          33vw
-        "
-                    className="
-          object-cover
-          transition-transform duration-500
-          ease-out
-          group-hover:scale-105
-        "
-                  />
-
-                  {/* Category Badge */}
-                  <span
-                    className="
-          absolute bottom-2.5 right-2.5
-          rounded-md
-          bg-primary/90
-          px-3 py-1.5
-          text-xs font-medium
-          text-light
-          backdrop-blur-sm
-          sm:text-sm
-        "
-                  >
-                    {post.hashtags[0] || "مقالات"}
-                  </span>
-                </Link>
-
-                {/* Content */}
-                <div className="flex flex-1 flex-col px-4 pb-5 pt-4 sm:px-5 sm:pb-6">
-                  {/* Meta */}
-                  <div
-                    className="
-          mb-2.5 flex items-center justify-between
-          gap-3
-          text-xs font-medium
-          text-primary/50
-          sm:text-sm
-        "
-                  >
-                    <span>{post.createdAt}</span>
-
-                    <span className="flex items-center gap-1.5">
-                      {post.readTime} دقائق
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3
-                    className="
-          mb-2.5
-          text-lg font-bold leading-snug
-          text-primary
-          sm:text-xl
-        "
-                  >
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className="
-            transition-colors
-            hover:text-accent
-            focus:outline-none
-          "
-                    >
-                      {post.title}
-                    </Link>
-                  </h3>
-
-                  {/* Description */}
-                  <p
-                    className="
-          line-clamp-3
-          text-sm leading-[1.9]
-          text-primary/70
-          sm:text-base
-        "
-                  >
-                    {post.description}
-                  </p>
-
-                  {/* Read More */}
-                  <div className="mt-auto flex justify-end items-center pt-3">
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className="
-      inline-flex items-center justify-center
-      self-start
-      rounded-md
-      bg-primary
-      px-5 py-2.5
-      text-sm font-semibold
-      text-light
-      transition-all duration-200
-      hover:bg-accent
-    "
-                    >
-                      أكمل القراءة «
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
           </div>
         </div>
       </section>

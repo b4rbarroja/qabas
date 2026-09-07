@@ -15,7 +15,7 @@ function calculateReadTime(content: string) {
 router.post("/", authMiddleWare, async (req: Request, res: Response) => {
   try {
     const { title, description, content, hashtags, imageUrl } = req.body;
-    const userId = req.user?.uid;
+    const userId = req.user?.userId;
 
     if (!title || !content || !userId) {
       return res.status(400).json({ error: "يرجى إرسال العنوان والمحتوى" });
@@ -123,7 +123,7 @@ router.put("/:id", authMiddleWare, async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
     const { title, description, content, hashtags, imageUrl } = req.body;
-    const currentUserId = req.user?.uid;
+    const currentUserId = req.user?.userId;
 
     const existingPost = await prisma.post.findUnique({ where: { id } });
 
@@ -175,7 +175,7 @@ router.put("/:id", authMiddleWare, async (req: Request, res: Response) => {
 router.delete("/:id", authMiddleWare, async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const currentUserId = req.user?.uid;
+    const currentUserId = req.user?.userId;
 
     const existingPost = await prisma.post.findUnique({ where: { id } });
 

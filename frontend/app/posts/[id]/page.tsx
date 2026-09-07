@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import PostActions from "../PostActions";
+import { Metadata } from "next";
 
 interface Post {
   id: string;
@@ -26,6 +26,72 @@ interface PostPageProps {
   }>;
 }
 
+// ==========================================
+// 1. إضافة دالة generateMetadata ديناميكية للـ WhatsApp & Social Media
+// ==========================================
+export async function generateMetadata({
+  params,
+}: PostPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return {
+        title: "المقال غير موجود | قبس",
+        description: "المقال الذي تبحث عنه غير متوفر.",
+      };
+    }
+
+    const post: Post = await response.json();
+
+    // تجهيز رابط الصورة المطلق (مهم جداً للواتساب)
+    let ogImageUrl = post.imageUrl;
+    if (ogImageUrl && !ogImageUrl.startsWith("http")) {
+      ogImageUrl = `http://localhost:5000${ogImageUrl}`;
+    }
+
+    return {
+      title: `${post.title} | قبس`,
+      description: post.description,
+      openGraph: {
+        title: post.title,
+        description: post.description,
+        type: "article",
+        publishedTime: post.createdAt,
+        authors: [post.author?.name || "قبس"],
+        images: ogImageUrl
+          ? [
+              {
+                url: ogImageUrl,
+                width: 1200,
+                height: 630,
+                alt: post.title,
+              },
+            ]
+          : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: post.title,
+        description: post.description,
+        images: ogImageUrl ? [ogImageUrl] : [],
+      },
+    };
+  } catch (error) {
+    return {
+      title: "قبس | منصة المقالات",
+      description: "اقرأ أحدث المقالات على منصة قبس",
+    };
+  }
+}
+
+// ==========================================
+// 2. المكون الرئيسي للصفحة
+// ==========================================
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = await params;
 
@@ -132,12 +198,10 @@ export default async function PostPage({ params }: PostPageProps) {
             <div className="flex items-center gap-3.5">
               {post.author?.userImage ? (
                 <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-primary/20 bg-primary">
-                  <Image
+                  <img
                     src={post.author.userImage}
                     alt={post.author.name}
-                    fill
-                    sizes="48px"
-                    className="object-cover grayscale"
+                    className="h-full w-full object-cover grayscale"
                   />
                 </div>
               ) : (
@@ -169,13 +233,10 @@ export default async function PostPage({ params }: PostPageProps) {
       {post.imageUrl && (
         <div className="mx-auto w-full max-w-[1200px] px-5 pt-8 sm:px-8 sm:pt-10 md:px-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-primary/10 bg-primary/10 shadow-lg md:aspect-[21/9]">
-            <Image
+            <img
               src={post.imageUrl}
               alt={post.title}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="object-cover transition-transform duration-700 hover:scale-[1.02]"
+              className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
             />
           </div>
         </div>
@@ -225,12 +286,10 @@ export default async function PostPage({ params }: PostPageProps) {
             <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-primary/10 bg-primary/5 p-6 sm:flex-row sm:items-start sm:p-8">
               {post.author?.userImage ? (
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-primary/20 bg-primary shadow-sm">
-                  <Image
+                  <img
                     src={post.author.userImage}
                     alt={post.author.name}
-                    fill
-                    sizes="64px"
-                    className="object-cover grayscale"
+                    className="h-full w-full object-cover grayscale"
                   />
                 </div>
               ) : (

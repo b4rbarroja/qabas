@@ -8,7 +8,7 @@ router.put("/", authMiddleWare, async (req: Request, res: Response) => {
     return res.status(401).json({ message: "غير مصرح لك" });
   }
 
-  const userId = req.user.uid;
+  const userId = req.user.userId;
   res.json({ message: "تم التحديث بنجاح" });
 });
 
