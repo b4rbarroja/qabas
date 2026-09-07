@@ -351,7 +351,9 @@ export default function PrivacyPolicyPage() {
                     التي توفرها مدونة قبس.
                   </p>
 
-                  <Link href="/#contact">من هنا</Link>
+                  <Link href="/#contact" className="text-dark">
+                    من هنا
+                  </Link>
                 </section>
 
                 {/* Conclusion */}
