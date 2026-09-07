@@ -351,9 +351,7 @@ export default function PrivacyPolicyPage() {
                     التي توفرها مدونة قبس.
                   </p>
 
-                  <p>
-                    سيتم إضافة بيانات التواصل الرسمية إلى هذه الصفحة عند توفرها.
-                  </p>
+                  <Link href="/#contact">من هنا</Link>
                 </section>
 
                 {/* Conclusion */}
