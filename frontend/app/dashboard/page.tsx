@@ -37,6 +37,7 @@ export default function UserDashboard() {
     hashtags: "",
     content: "",
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -53,22 +54,22 @@ export default function UserDashboard() {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    const postPayload = {
-      title: formData.title,
-      description: formData.description,
-      imageUrl: formData.imageUrl,
-      content: formData.content,
-      hashtags: formattedHashtags,
-    };
+    const postPayload = new FormData();
+    postPayload.append("title", formData.title);
+    postPayload.append("description", formData.description);
+    postPayload.append("content", formData.content);
+    postPayload.append("hashtags", JSON.stringify(formattedHashtags));
+    if (imageFile) {
+      postPayload.append("image", imageFile);
+    } else if (formData.imageUrl) {
+      postPayload.append("imageUrl", formData.imageUrl);
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/posts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
-        body: JSON.stringify(postPayload),
+        body: postPayload,
       });
 
       if (!response.ok) {
@@ -85,6 +86,7 @@ export default function UserDashboard() {
         hashtags: "",
         content: "",
       });
+      setImageFile(null);
       setActiveTab("my-posts");
     } catch (error: any) {
       alert(`خطأ: ${error.message || error}`);
