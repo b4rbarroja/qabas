@@ -43,10 +43,14 @@ export default function LoginForm() {
         }),
         credentials: "include",
       });
-      if (!response.status) {
+
+      if (!response.ok) {
         alert("Please try again, error happened!");
+        return;
       }
-      router.push("/dashboard");
+
+      // توجيه مع عمل ريفريش كامل لتحديث النافبار وحالة المستخدم فوراً
+      window.location.href = "/dashboard";
     } catch (error) {
       console.log(error);
       alert(error);

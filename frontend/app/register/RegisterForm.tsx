@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "لسانيات",
@@ -20,8 +19,6 @@ const CATEGORIES = [
 ];
 
 export default function RegisterForm() {
-  const router = useRouter();
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,10 +28,12 @@ export default function RegisterForm() {
     bio: "",
     selectedCategories: [] as string[],
     portfolioUrl: "",
-    userImage: "",
     agreeTerms: false,
     agreeOriginality: false,
   });
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -58,6 +57,14 @@ export default function RegisterForm() {
         };
       }
     });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,10 +95,6 @@ export default function RegisterForm() {
       setErrorMessage("يرجى اختيار مجال كتابة واحد على الأقل.");
       return;
     }
-    if (formData.userImage.length === 0) {
-      setErrorMessage("يرجى وضع رابط لصورتك الشخصية.");
-      return;
-    }
     if (!formData.bio.trim()) {
       setErrorMessage("يرجى كتابة نبذة تعريفية مختصرة عن الكاتب.");
       return;
@@ -104,26 +107,48 @@ export default function RegisterForm() {
     setIsSubmitting(true);
 
     try {
+      const registerPayload = new FormData();
+      registerPayload.append("name", formData.name);
+      registerPayload.append("email", formData.email);
+      registerPayload.append("password", formData.password);
+      registerPayload.append("specialization", formData.specialization);
+      registerPayload.append("bio", formData.bio);
+      registerPayload.append("portfolioUrl", formData.portfolioUrl);
+      registerPayload.append(
+        "selectedCategories",
+        JSON.stringify(formData.selectedCategories),
+      );
+      registerPayload.append("agreeTerms", String(formData.agreeTerms));
+      registerPayload.append(
+        "agreeOriginality",
+        String(formData.agreeOriginality),
+      );
+
+      if (imageFile) {
+        registerPayload.append("userImage", imageFile);
+      }
+
       const response = await fetch("http://localhost:5000/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
         credentials: "include",
+        body: registerPayload,
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        alert(errorData?.error || "Please try again, error happened!");
+        setErrorMessage(
+          errorData?.error || "حدث خطأ أثناء التسجيل، يرجى المحاولة لاحقاً",
+        );
         setIsSubmitting(false);
         return;
       }
-      router.push("/dashboard");
+
+      window.location.href = "/login";
     } catch (error) {
       console.error("Network or script error:", error);
-      alert("Could not connect to the server. Please check your connection.");
+      setErrorMessage(
+        "تعذر الاتصال بالسيرفر. يرجى التحقق من اتصالك بالإنترنت.",
+      );
       setIsSubmitting(false);
     }
   };
@@ -256,7 +281,7 @@ export default function RegisterForm() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 hover:text-primary transition-colors text-xs"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 hover:text-primary transition-colors text-xs cursor-pointer"
                       >
                         {showPassword ? "إخفاء" : "إظهار"}
                       </button>
@@ -292,7 +317,7 @@ export default function RegisterForm() {
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
                         }
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 hover:text-primary transition-colors text-xs"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 hover:text-primary transition-colors text-xs cursor-pointer"
                       >
                         {showConfirmPassword ? "إخفاء" : "إظهار"}
                       </button>
@@ -349,7 +374,7 @@ export default function RegisterForm() {
                             key={cat}
                             type="button"
                             onClick={() => handleCategoryToggle(cat)}
-                            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 cursor-pointer ${
                               isSelected
                                 ? "bg-primary text-light shadow-xs"
                                 : "border border-primary/15 bg-background text-primary/80 hover:border-primary/40 hover:bg-primary/5"
@@ -409,26 +434,21 @@ export default function RegisterForm() {
                       className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
                     />
                   </div>
+
+                  {/* File Upload for userImage */}
                   <div>
                     <label
                       htmlFor="userImage"
                       className="mb-1.5 block text-xs font-semibold text-primary sm:text-sm"
                     >
-                      ضع رابطا لصورتك الشخصية
+                      الصورة الشخصية (اختر ملف صورة من جهازك)
                     </label>
                     <input
                       id="userImage"
-                      type="url"
-                      dir="ltr"
-                      placeholder="https://yourimage.com"
-                      value={formData.userImage}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          userImage: e.target.value,
-                        })
-                      }
-                      className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-2.5 text-xs text-primary file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-light hover:file:bg-accent transition-all cursor-pointer"
                     />
                   </div>
                 </div>
@@ -495,7 +515,7 @@ export default function RegisterForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-xl bg-primary py-4 text-center text-sm font-bold text-light shadow-lg transition-all duration-200 hover:bg-accent hover:shadow-xl active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed sm:text-base"
+                  className="w-full rounded-xl bg-primary py-4 text-center text-sm font-bold text-light shadow-lg transition-all duration-200 hover:bg-accent hover:shadow-xl active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed sm:text-base cursor-pointer"
                 >
                   {isSubmitting ? "جارٍ تسجيل الحساب..." : "إنشاء حساب الكاتب"}
                 </button>
@@ -539,7 +559,13 @@ export default function RegisterForm() {
             <div className="rounded-xl border border-primary/10 bg-background p-5 shadow-xs">
               <div className="flex items-center gap-3.5">
                 <div className="relative flex h-13 w-13 shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary text-light font-bold text-lg shadow-sm">
-                  {formData.name ? (
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt={formData.name || "صورة الكاتب"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : formData.name ? (
                     formData.name.charAt(0)
                   ) : (
                     <Image

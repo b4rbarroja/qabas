@@ -27,6 +27,18 @@ interface PostPageProps {
 }
 
 // ==========================================
+// 0. دالة مساعدة لتحويل الرابط النسبي إلى مطلق (localhost:5000)
+// ==========================================
+const getFullImageUrl = (url: string | null) => {
+  if (!url) return null;
+  // إذا كان الرابط يبدأ بـ http فهو مطلق بالفعل
+  if (url.startsWith("http")) return url;
+  // خلاف ذلك، قم بإضافة رابط الباك إند
+  // ملاحظة: تأكد من تطابق المنفذ 5000 مع إعدادات الباك إند لديك
+  return `http://localhost:5000${url}`;
+};
+
+// ==========================================
 // 1. إضافة دالة generateMetadata ديناميكية للـ WhatsApp & Social Media
 // ==========================================
 export async function generateMetadata({
@@ -48,11 +60,8 @@ export async function generateMetadata({
 
     const post: Post = await response.json();
 
-    // تجهيز رابط الصورة المطلق (مهم جداً للواتساب)
-    let ogImageUrl = post.imageUrl;
-    if (ogImageUrl && !ogImageUrl.startsWith("http")) {
-      ogImageUrl = `http://localhost:5000${ogImageUrl}`;
-    }
+    // تجهيز رابط الصورة المطلق باستخدام الدالة المساعدة
+    const ogImageUrl = getFullImageUrl(post.imageUrl);
 
     return {
       title: `${post.title} | قبس`,
@@ -197,11 +206,14 @@ export default async function PostPage({ params }: PostPageProps) {
           <div className="flex flex-col gap-5 border-t border-primary/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3.5">
               {post.author?.userImage ? (
+                /* ✅ تعديل هنا: استخدام الدالة المساعدة جلب الرابط المطلق */
                 <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-primary/20 bg-primary">
                   <img
-                    src={post.author.userImage}
+                    src={getFullImageUrl(post.author.userImage)!}
                     alt={post.author.name}
                     className="h-full w-full object-cover grayscale"
+                    // لضمان تحميل الصورة بشكل أسرع لأنها في أعلى الصفحة
+                    loading="eager"
                   />
                 </div>
               ) : (
@@ -234,7 +246,8 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="mx-auto w-full max-w-[1200px] px-5 pt-8 sm:px-8 sm:pt-10 md:px-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-primary/10 bg-primary/10 shadow-lg md:aspect-[21/9]">
             <img
-              src={post.imageUrl}
+              /* ✅ تعديل هنا أيضاً: استخدام الدالة المساعدة لصورة المقال */
+              src={getFullImageUrl(post.imageUrl)!}
               alt={post.title}
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
             />
@@ -285,11 +298,13 @@ export default async function PostPage({ params }: PostPageProps) {
             {/* Author Box */}
             <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-primary/10 bg-primary/5 p-6 sm:flex-row sm:items-start sm:p-8">
               {post.author?.userImage ? (
+                /* ✅ تعديل هنا أيضاً: استخدام الدالة المساعدة في صندوق الكاتب الأسفل */
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-primary/20 bg-primary shadow-sm">
                   <img
-                    src={post.author.userImage}
+                    src={getFullImageUrl(post.author.userImage)!}
                     alt={post.author.name}
                     className="h-full w-full object-cover grayscale"
+                    loading="lazy"
                   />
                 </div>
               ) : (

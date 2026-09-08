@@ -4,14 +4,13 @@ import {
   PenTool,
   BookOpen,
   Compass,
-  UserCheck,
   LogOut,
   Plus,
   XCircle,
   Edit3,
   Settings,
-  Upload,
   X,
+  Home,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -40,6 +39,18 @@ export default function UserDashboard() {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+  // حالة بيانات البروفايل وصورة الشخصية
+  const [profileData, setProfileData] = useState({
+    name: "",
+    email: "",
+    specialization: "",
+    bio: "",
+    selectedCategories: [] as string[],
+    portfolioUrl: "",
+    userImage: "",
+  });
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+
   // حالات مودال التعديل (Edit Modal State)
   const [editingPost, setEditingPost] = useState<any | null>(null);
   const [editFormData, setEditFormData] = useState({
@@ -60,6 +71,12 @@ export default function UserDashboard() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfileImageFile(e.target.files[0]);
     }
   };
 
@@ -260,7 +277,9 @@ export default function UserDashboard() {
       });
 
       if (response.ok) {
-        router.push("/");
+        // بدلاً من router.push('/')
+        // عمل ريفريش كامل وتوجيه للرئيسية لتحديث النافبار فوراً
+        window.location.href = "/";
       }
     } catch (error) {
       alert(error);
@@ -272,78 +291,90 @@ export default function UserDashboard() {
       dir="rtl"
       className="min-h-screen bg-[#f4f4f4] font-thamaniyah text-[#1a1a1a] font-sans"
     >
-      {/* الشريط العلوي - Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xl">
-              ق
-            </div>
-
-            <span className="font-semibold text-lg tracking-tight">
-              قَبَسْ | لوحة التحكم
-            </span>
+      {/* المحتوى الرئيسي - Main Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+        {/* القائمة الجانبية - Sidebar Navigation */}
+        <aside className="w-full md:w-64 space-y-6">
+          {/* شعار المنصة ورابط الرئيسية */}
+          <div className="bg-white rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                ق
+              </div>
+              <span className="font-semibold text-lg tracking-tight">
+                قَبَسْ
+              </span>
+            </Link>
+            <Link
+              href="/"
+              title="العودة للرئيسية"
+              className="p-2 text-gray-500 hover:text-black rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <Home size={18} />
+            </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* روابط التنقل الرئيسية */}
+          <div className="space-y-1.5">
+            <button
+              onClick={() => setActiveTab("my-posts")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all cursor-pointer ${
+                activeTab === "my-posts"
+                  ? "bg-black text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <BookOpen size={18} />
+              <span>مقالاتي</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("create")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all cursor-pointer ${
+                activeTab === "create"
+                  ? "bg-black text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <PenTool size={18} />
+              <span>نشر مقالة جديدة</span>
+            </button>
+
+            <button
+              onClick={() => router.push("/posts")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all cursor-pointer ${
+                activeTab === "explore"
+                  ? "bg-black text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <Compass size={18} />
+              <span>تصفح المقالات</span>
+            </button>
+          </div>
+
+          {/* خيارات الحساب والخروج */}
+          <div className="pt-4 border-t border-gray-200/80 space-y-1.5">
             <button
               onClick={() => setActiveTab("settings")}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-black px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all cursor-pointer ${
+                activeTab === "settings"
+                  ? "bg-black text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
             >
-              <Settings size={16} />
+              <Settings size={18} />
               <span>إعدادات الحساب</span>
             </button>
 
             <button
-              className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"
               onClick={handleLogOut}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer"
             >
-              <LogOut size={16} />
+              <LogOut size={18} />
               <span>تسجيل الخروج</span>
             </button>
           </div>
-        </div>
-      </header>
-
-      {/* المحتوى الرئيسي - Main Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
-        {/* القائمة الجانبية - Sidebar Navigation */}
-        <aside className="w-full md:w-64 space-y-2">
-          <button
-            onClick={() => setActiveTab("my-posts")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-              activeTab === "my-posts"
-                ? "bg-black text-white shadow-sm"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <BookOpen size={18} />
-            <span>مقالاتي</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("create")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-              activeTab === "create"
-                ? "bg-black text-white shadow-sm"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <PenTool size={18} />
-            <span>نشر مقالة جديدة</span>
-          </button>
-
-          <button
-            onClick={() => router.push("/posts")}
-            className={` cursor-pointer w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-              activeTab === "explore"
-                ? "bg-black text-white shadow-sm"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <Compass size={18} />
-            <span>تصفح المقالات</span>
-          </button>
         </aside>
 
         {/* منطقة عرض المحتوى - Content Area */}
@@ -366,7 +397,7 @@ export default function UserDashboard() {
 
                   <button
                     onClick={() => setActiveTab("create")}
-                    className="flex items-center gap-1.5 bg-black text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-800 transition-colors"
+                    className="flex items-center gap-1.5 bg-black text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-800 transition-colors cursor-pointer"
                   >
                     <Plus size={16} />
                     <span>كتابة مقال</span>
@@ -407,7 +438,7 @@ export default function UserDashboard() {
                         <div className="flex gap-2 border-t border-gray-100 pt-3">
                           <button
                             onClick={() => handleOpenEditModal(post)}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors cursor-pointer"
                           >
                             <Edit3 size={14} /> تعديل
                           </button>
@@ -533,36 +564,145 @@ export default function UserDashboard() {
 
                 <form
                   className="space-y-4 max-w-lg"
-                  onSubmit={(e) => e.preventDefault()}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    try {
+                      const profilePayload = new FormData();
+                      profilePayload.append("name", profileData.name);
+                      profilePayload.append(
+                        "specialization",
+                        profileData.specialization,
+                      );
+                      profilePayload.append("bio", profileData.bio);
+                      profilePayload.append(
+                        "portfolioUrl",
+                        profileData.portfolioUrl,
+                      );
+
+                      if (profileImageFile) {
+                        profilePayload.append("userImage", profileImageFile);
+                      }
+
+                      const response = await fetch(
+                        "http://localhost:5000/api/users/profile",
+                        {
+                          method: "PUT",
+                          credentials: "include",
+                          body: profilePayload,
+                        },
+                      );
+
+                      if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(
+                          errorData.error || "فشل تحديث البيانات الشخصية",
+                        );
+                      }
+
+                      const updatedUser = await response.json();
+                      alert("تم تحديث الملف الشخصي بنجاح!");
+
+                      setUser((prev: any) => ({ ...prev, ...updatedUser }));
+                    } catch (error: any) {
+                      alert(`خطأ أثناء التحديث: ${error.message || error}`);
+                    }
+                  }}
                 >
+                  {/* رفع صورة البروفايل */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      الاسم الكامل
+                      الصورة الشخصية (ملف من جهازك)
                     </label>
+                    <div className="relative border border-gray-200 rounded-xl p-2 bg-white flex items-center gap-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileImageChange}
+                        className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                      />
+                    </div>
+                    {profileImageFile && (
+                      <p className="text-xs text-green-600 mt-1 font-medium">
+                        ✓ تم اختيار: {profileImageFile.name}
+                      </p>
+                    )}
+                  </div>
 
+                  {/* الاسم الكامل */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      الاسم الكامل <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
-                      defaultValue={user?.name || ""}
-                      placeholder="أدخل اسمك..."
+                      required
+                      value={profileData.name}
+                      onChange={(e) =>
+                        setProfileData({ ...profileData, name: e.target.value })
+                      }
+                      placeholder="أدخل اسمك الكامل..."
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
                     />
                   </div>
 
+                  {/* التخصص */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      التخصص / المسمى الوظيفي
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.specialization}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          specialization: e.target.value,
+                        })
+                      }
+                      placeholder="مثال: كاتب محتوى / مطور ويب..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                    />
+                  </div>
+
+                  {/* الوصف القصير (Bio) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       الوصف القصير (Bio)
                     </label>
 
+                    <textarea
+                      rows={3}
+                      value={profileData.bio}
+                      onChange={(e) =>
+                        setProfileData({ ...profileData, bio: e.target.value })
+                      }
+                      placeholder="أدخل نبذة قصيرة عنك..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 resize-none"
+                    />
+                  </div>
+
+                  {/* رابط معرض الأعمال (Portfolio) */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      رابط موقعك / معرض أعمالك
+                    </label>
                     <input
-                      type="text"
-                      placeholder="أدخل وصفاً قصيراً..."
+                      type="url"
+                      value={profileData.portfolioUrl}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          portfolioUrl: e.target.value,
+                        })
+                      }
+                      placeholder="https://example.com"
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-black text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-800 transition-colors"
+                    className="bg-black text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-800 transition-colors cursor-pointer"
                   >
                     حفظ التغييرات
                   </button>
@@ -581,7 +721,7 @@ export default function UserDashboard() {
               <h3 className="text-xl font-bold">تعديل المقال</h3>
               <button
                 onClick={() => setEditingPost(null)}
-                className="text-gray-400 hover:text-black p-1 rounded-lg hover:bg-gray-100 transition-colors"
+                className="text-gray-400 hover:text-black p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -677,7 +817,7 @@ export default function UserDashboard() {
                 <button
                   type="button"
                   onClick={() => setEditingPost(null)}
-                  className="px-5 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="px-5 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -685,7 +825,7 @@ export default function UserDashboard() {
                   type="submit"
                   className="bg-black text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
                 >
-                  حفظ التعديلات
+                  حفظ التغييرات
                 </button>
               </div>
             </form>
