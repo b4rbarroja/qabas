@@ -19,7 +19,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(
   cors({
-    origin: true,
+    origin: process.env.CLIENT_URL || true, // يُفضل وضع رابط الفرونت المباشر هنا في الإنتاج
     credentials: true,
   }),
 );
@@ -34,11 +34,10 @@ app.use("/api/posts", postRouter);
 app.use("/api/auth/me", currentUser);
 app.use("/api/auth/profile", profileRouter);
 
-export default app;
+// تشغيل السيرفر مباشرة دون شروط
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Backend server running on port ${PORT}`);
+});
 
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-  });
-}
+export default app;

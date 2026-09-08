@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsx src/app.ts"
+    "dev": "npx tsx src/app.ts",
+    "build": "npx prisma generate && tsc",
+    "start": "node dist/app.js"
   },
   "keywords": [],
   "type": "module",

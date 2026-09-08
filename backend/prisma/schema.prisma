@@ -38,7 +38,7 @@ model User {
   agreeTerms         Boolean  @default(false)
   agreeOriginality   Boolean  @default(false)
   posts              Post[]
-  userImage          String
+  userImage          String?
 }
 
 model Post {
