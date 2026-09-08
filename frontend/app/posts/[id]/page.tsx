@@ -35,7 +35,7 @@ const getFullImageUrl = (url: string | null) => {
   if (url.startsWith("http")) return url;
   // خلاف ذلك، قم بإضافة رابط الباك إند
   // ملاحظة: تأكد من تطابق المنفذ 5000 مع إعدادات الباك إند لديك
-  return `http://localhost:5000${url}`;
+  return `${url}`;
 };
 
 // ==========================================
@@ -47,7 +47,7 @@ export async function generateMetadata({
   const { id } = await params;
 
   try {
-    const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
+    const response = await fetch(`/api/posts/${id}`, {
       cache: "no-store",
     });
 
@@ -104,7 +104,7 @@ export async function generateMetadata({
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = await params;
 
-  const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
+  const response = await fetch(`/api/posts/${id}`, {
     cache: "no-store",
   });
 

@@ -98,7 +98,7 @@ export default function UserDashboard() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/posts", {
+      const response = await fetch("/api/posts", {
         method: "POST",
         credentials: "include",
         body: postPayload,
@@ -132,16 +132,13 @@ export default function UserDashboard() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/posts/${postId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -188,14 +185,11 @@ export default function UserDashboard() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/posts/${editingPost.id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          body: updatePayload,
-        },
-      );
+      const response = await fetch(`/api/posts/${editingPost.id}`, {
+        method: "PUT",
+        credentials: "include",
+        body: updatePayload,
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -219,7 +213,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const cookieCheck = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch("/api/auth/me", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -243,16 +237,13 @@ export default function UserDashboard() {
   useEffect(() => {
     const findMyPosts = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/posts/my-posts",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
+        const response = await fetch("/api/posts/my-posts", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error("فشل جلب المقالات");
@@ -268,7 +259,7 @@ export default function UserDashboard() {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/logout", {
+      const response = await fetch("/api/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -583,14 +574,11 @@ export default function UserDashboard() {
                         profilePayload.append("userImage", profileImageFile);
                       }
 
-                      const response = await fetch(
-                        "http://localhost:5000/api/users/profile",
-                        {
-                          method: "PUT",
-                          credentials: "include",
-                          body: profilePayload,
-                        },
-                      );
+                      const response = await fetch("/api/users/profile", {
+                        method: "PUT",
+                        credentials: "include",
+                        body: profilePayload,
+                      });
 
                       if (!response.ok) {
                         const errorData = await response.json();

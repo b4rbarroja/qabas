@@ -1,15 +1,19 @@
 {
-  "version": 2,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "builds": [
     {
-      "src": "src/app.ts",
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "backend/src/server.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "src/app.ts"
+      "src": "/api/(.*)",
+      "dest": "/backend/src/server.ts"
     }
   ]
 }
