@@ -3,26 +3,26 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-// الروابط الأساسية التي تظهر للجميع
 const baseNavLinks = [
   { href: "/", label: "الرئيسية" },
   { href: "/posts", label: "التدوينات" },
   { href: "/#about", label: "من نحن" },
 ];
 
-// روابط تسجيل الدخول غير المسجلين
 const authLinks = [
   { href: "/login", label: "تسجيل الدخول" },
   { href: "/register", label: "سجل معنا", isPrimary: true },
 ];
 
 export default function Navbar() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [userRole, setUserRole] = useState<string>("USER");
 
-  // التحقق من الجلسة عبر الباك إند
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -31,16 +31,21 @@ export default function Navbar() {
           headers: {
             "Content-Type": "application/json",
           },
-          // إرسال الـ Cookies مع الطلب للتأكد من التوكن
           credentials: "include",
         });
 
         if (response.ok) {
+          const data = await response.json();
+          // استخراج الدور بأمان سواء كان داخل data.user.role أو data.role مباشرة
+          const role = data?.user?.role || data?.role || "USER";
+
+          setUserRole(role);
           setIsLoggedIn(true);
         } else {
           setIsLoggedIn(false);
         }
       } catch (error) {
+        console.error("خطأ في التحقق من الجلسة:", error);
         setIsLoggedIn(false);
       } finally {
         setLoading(false);
@@ -49,6 +54,9 @@ export default function Navbar() {
 
     checkAuth();
   }, []);
+
+  // تحديد مسار لوحة التحكم بناءً على دور المستخدم
+  const dashboardPath = userRole === "ADMIN" ? "/addash" : "/dashboard";
 
   return (
     <header className="relative z-[100] w-full bg-background font-thamaniyah">
@@ -66,9 +74,7 @@ export default function Navbar() {
           xl:px-20
         "
       >
-        {/* =========================
-            Logo
-        ========================= */}
+        {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
             src="/blackQabas2.png"
@@ -80,11 +86,8 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* =========================
-            Desktop Navigation
-        ========================= */}
+        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 text-dark md:flex">
-          {/* الروابط الأساسية */}
           {baseNavLinks.map((link) => (
             <Link
               key={link.label}
@@ -95,13 +98,11 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* أثناء تحميل الفحص نبقي المساحة لتفادي حدوث Layout Shift */}
           {loading ? (
             <div className="h-10 w-24 animate-pulse rounded-lg bg-primary/10" />
           ) : isLoggedIn ? (
-            /* في حالة تسجيل الدخول: عرض أيقونة ورابط لوحة التحكم */
             <Link
-              href="/dashboard"
+              href={dashboardPath}
               title="لوحة التحكم"
               className="
                 flex
@@ -134,7 +135,6 @@ export default function Navbar() {
               <span className="text-sm font-bold">لوحة التحكم</span>
             </Link>
           ) : (
-            /* في حالة عدم تسجيل الدخول: عرض زر الدخول والتسجيل */
             authLinks.map((link) => (
               <Link
                 key={link.label}
@@ -164,9 +164,7 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* =========================
-            Mobile Burger
-        ========================= */}
+        {/* Mobile Burger */}
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -205,9 +203,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* =========================
-          Mobile Menu
-        ========================= */}
+      {/* Mobile Menu */}
       <div
         className={`
           fixed inset-0 z-[90]
@@ -241,7 +237,6 @@ export default function Navbar() {
             }
           `}
         >
-          {/* الروابط الأساسية للموبايل */}
           {baseNavLinks.map((link) => (
             <Link
               key={link.label}
@@ -253,11 +248,10 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* روابط الجلسة للموبايل */}
           {!loading &&
             (isLoggedIn ? (
               <Link
-                href="/dashboard"
+                href={dashboardPath}
                 onClick={() => setIsMenuOpen(false)}
                 className="
                   flex
@@ -327,7 +321,6 @@ export default function Navbar() {
             ))}
         </nav>
 
-        {/* Close Button */}
         <button
           type="button"
           onClick={() => setIsMenuOpen(false)}

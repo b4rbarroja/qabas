@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 // 1. تصحيح الـ Interface لتطابق البيانات الفعلية في التوكن
 export interface AuthenticatedRequest extends Request {
   user?: {
-    userId: string; // 👈 تغيير uid إلى userId
+    userId: string;
     role: string;
   };
 }

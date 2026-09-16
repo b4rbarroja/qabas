@@ -47,10 +47,27 @@ export default function LoginForm() {
       if (!response.ok) {
         alert("Please try again, error happened!");
         return;
-      }
+      } else if (response.ok) {
+        try {
+          const checkRole = async () => {
+            const response = await fetch("http://localhost:5000/api/auth/me", {
+              method: "GET",
+              credentials: "include",
+            });
+            const data = await response.json();
+            const role = data.user.role;
 
-      // توجيه مع عمل ريفريش كامل لتحديث النافبار وحالة المستخدم فوراً
-      window.location.href = "/dashboard";
+            if (role == "USER") {
+              router.push("/dashboard");
+            } else if (role == "ADMIN") {
+              router.push("/addash");
+            }
+          };
+          checkRole();
+        } catch (error) {
+          alert(error);
+        }
+      }
     } catch (error) {
       console.log(error);
       alert(error);
