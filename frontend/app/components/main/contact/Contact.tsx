@@ -14,7 +14,7 @@ export default function ContactUs() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/messages", {
+      const response = await fetch("http://localhost:5000/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
