@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import authMiddleWare from "../middlewares/authMiddleware";
 import multer from "multer";
 import path from "path";
+import { adminMiddleware } from "../middlewares/adminMiddleware";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -62,6 +63,7 @@ router.post(
           imageUrl,
           authorId: userId,
           userId: userId,
+          status: "PENDING",
         },
 
         include: {
@@ -90,6 +92,11 @@ router.post(
 router.get("/", async (req: Request, res: Response): Promise<any> => {
   try {
     const posts = await prisma.post.findMany({
+      where: {
+        status: {
+          in: ["PENDING", "APPROVED"],
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -261,20 +268,30 @@ router.put(
 
 router.delete("/:id", authMiddleWare, async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string; // تحويل النوع صراحة لمنع الخطأ
+    const id = req.params.id as string;
     const currentUserId = req.user?.userId;
+    const currentUserRole = req.user?.role; // جلب دور المستخدم الحالي
+
     const existingPost = await prisma.post.findUnique({
       where: { id },
     });
+
     if (!existingPost) {
       return res.status(404).json({ error: "المقال غير موجود" });
     }
-    if (existingPost.authorId !== currentUserId) {
+
+    // السماح بالحذف إذا كان كاتب المقال أو كان أدمن
+    const isAuthor = existingPost.authorId === currentUserId;
+    const isAdmin = currentUserRole === "ADMIN";
+
+    if (!isAuthor && !isAdmin) {
       return res.status(403).json({ error: "غير مصرح لك بحذف هذا المقال" });
     }
+
     await prisma.post.delete({
       where: { id },
     });
+
     return res.status(200).json({ message: "تم حذف المقال بنجاح" });
   } catch (error) {
     console.error("Error deleting post:", error);

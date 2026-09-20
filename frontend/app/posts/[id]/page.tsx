@@ -1,6 +1,8 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PostActions from "../PostActions";
-import { Metadata } from "next";
 
 interface Post {
   id: string;
@@ -9,6 +11,7 @@ interface Post {
   content: string;
   hashtags: string[];
   readTime: number;
+  status: string;
   imageUrl: string | null;
   createdAt: string;
   author: {
@@ -26,89 +29,97 @@ interface PostPageProps {
   }>;
 }
 
-// ==========================================
-// 0. دالة مساعدة لتحويل الرابط النسبي إلى مطلق (localhost:5000)
-// ==========================================
+// دالة مساعدة لتحويل الرابط النسبي إلى مطلق
 const getFullImageUrl = (url: string | null) => {
   if (!url) return null;
-  // إذا كان الرابط يبدأ بـ http فهو مطلق بالفعل
   if (url.startsWith("http")) return url;
-  // خلاف ذلك، قم بإضافة رابط الباك إند
-  // ملاحظة: تأكد من تطابق المنفذ 5000 مع إعدادات الباك إند لديك
   return `http://localhost:5000${url}`;
 };
 
-// ==========================================
-// 1. إضافة دالة generateMetadata ديناميكية للـ WhatsApp & Social Media
-// ==========================================
-export async function generateMetadata({
-  params,
-}: PostPageProps): Promise<Metadata> {
-  const { id } = await params;
+export default function PostPage({ params }: PostPageProps) {
+  const [postId, setPostId] = useState<string | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  try {
-    const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
-      cache: "no-store",
-    });
+  // حالات الإبلاغ المنسدل المدمج
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  const [reportSubmitted, setReportSubmitted] = useState(false);
 
-    if (!response.ok) {
-      return {
-        title: "المقال غير موجود | قبس",
-        description: "المقال الذي تبحث عنه غير متوفر.",
-      };
+  useEffect(() => {
+    async function loadPost() {
+      try {
+        const resolvedParams = await params;
+        setPostId(resolvedParams.id);
+
+        const response = await fetch(
+          `http://localhost:5000/api/posts/${resolvedParams.id}`,
+          { cache: "no-store" },
+        );
+
+        if (!response.ok) {
+          setNotFound(true);
+        } else {
+          const data: Post = await response.json();
+          setPost(data);
+        }
+      } catch (error) {
+        console.error("خطأ أثناء جلب المقال:", error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    const post: Post = await response.json();
+    loadPost();
+  }, [params]);
 
-    // تجهيز رابط الصورة المطلق باستخدام الدالة المساعدة
-    const ogImageUrl = getFullImageUrl(post.imageUrl);
+  // دالة إرسال الإبلاغ
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportReason.trim() || !postId) return;
 
-    return {
-      title: `${post.title} | قبس`,
-      description: post.description,
-      openGraph: {
-        title: post.title,
-        description: post.description,
-        type: "article",
-        publishedTime: post.createdAt,
-        authors: [post.author?.name || "قبس"],
-        images: ogImageUrl
-          ? [
-              {
-                url: ogImageUrl,
-                width: 1200,
-                height: 630,
-                alt: post.title,
-              },
-            ]
-          : [],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: post.title,
-        description: post.description,
-        images: ogImageUrl ? [ogImageUrl] : [],
-      },
-    };
-  } catch (error) {
-    return {
-      title: "قبس | منصة المقالات",
-      description: "اقرأ أحدث المقالات على منصة قبس",
-    };
+    setIsSubmittingReport(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          postId,
+          reason: reportReason,
+        }),
+      });
+
+      if (res.ok) {
+        setReportSubmitted(true);
+        setTimeout(() => {
+          setIsReportOpen(false);
+          setReportSubmitted(false);
+          setReportReason("");
+        }, 3000);
+      } else {
+        alert("حدث خطأ أثناء إرسال البلاغ.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("تعذر الاتصال بالسيرفر.");
+    } finally {
+      setIsSubmittingReport(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background font-thamaniyah text-primary">
+        <p className="text-base font-semibold">جاري تحميل المقال...</p>
+      </div>
+    );
   }
-}
 
-// ==========================================
-// 2. المكون الرئيسي للصفحة
-// ==========================================
-export default async function PostPage({ params }: PostPageProps) {
-  const { id } = await params;
-
-  const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
+  if (notFound || !post) {
     return (
       <main
         dir="rtl"
@@ -119,15 +130,12 @@ export default async function PostPage({ params }: PostPageProps) {
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-light">
               !
             </div>
-
             <h1 className="mt-6 text-2xl font-bold text-primary sm:text-3xl">
               المقال غير موجود
             </h1>
-
             <p className="mt-3 text-sm leading-7 text-dark/60">
               المقال الذي تبحث عنه غير متوفر حالياً.
             </p>
-
             <Link
               href="/posts"
               className="mt-7 inline-flex items-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-light transition-all duration-200 hover:bg-accent hover:shadow-md"
@@ -141,16 +149,12 @@ export default async function PostPage({ params }: PostPageProps) {
     );
   }
 
-  const post: Post = await response.json();
-
   return (
     <article
       className="w-full bg-background font-thamaniyah text-dark"
       dir="rtl"
     >
-      {/* =========================
-          HERO / HEADER
-      ========================== */}
+      {/* HERO / HEADER */}
       <header className="relative isolate w-full border-b border-primary/10 bg-primary/5 py-10 sm:py-14 md:py-16">
         <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8 md:px-12">
           {/* Breadcrumb */}
@@ -161,15 +165,11 @@ export default async function PostPage({ params }: PostPageProps) {
             <Link href="/" className="transition-colors hover:text-accent">
               الرئيسية
             </Link>
-
             <span>/</span>
-
             <Link href="/posts" className="transition-colors hover:text-accent">
               المقالات
             </Link>
-
             <span>/</span>
-
             <span className="max-w-[200px] truncate font-bold text-primary/80 sm:max-w-md">
               المقال
             </span>
@@ -180,13 +180,19 @@ export default async function PostPage({ params }: PostPageProps) {
             <span className="rounded-2xl bg-primary px-3 py-1 text-xs font-semibold text-light shadow-xs">
               مقال
             </span>
-
             <span className="text-xs font-medium text-primary/60 sm:text-sm">
               {new Date(post.createdAt).toLocaleDateString("ar-EG")}
             </span>
-
+            {post.status === "PENDING" ? (
+              <span className="text-xs font-bold text-red-700 sm:text-sm">
+                قيد المراجعة
+              </span>
+            ) : post.status === "APPROVED" ? (
+              <span className="text-xs font-bold text-green-600 sm:text-sm">
+                تمت مراجعته
+              </span>
+            ) : null}
             <span className="text-primary/30">•</span>
-
             <span className="text-xs font-medium text-primary/60 sm:text-sm">
               وقت القراءة: {post.readTime} دقائق
             </span>
@@ -202,17 +208,15 @@ export default async function PostPage({ params }: PostPageProps) {
             {post.description}
           </p>
 
-          {/* Author */}
+          {/* Author & Share */}
           <div className="flex flex-col gap-5 border-t border-primary/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3.5">
               {post.author?.userImage ? (
-                /* ✅ تعديل هنا: استخدام الدالة المساعدة جلب الرابط المطلق */
                 <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-primary/20 bg-primary">
                   <img
                     src={getFullImageUrl(post.author.userImage)!}
                     alt={post.author.name}
                     className="h-full w-full object-cover grayscale"
-                    // لضمان تحميل الصورة بشكل أسرع لأنها في أعلى الصفحة
                     loading="eager"
                   />
                 </div>
@@ -226,27 +230,24 @@ export default async function PostPage({ params }: PostPageProps) {
                 <h2 className="text-sm font-bold text-primary sm:text-base">
                   {post.author?.name || "كاتب غير معروف"}
                 </h2>
-
                 <p className="text-xs text-primary/60">
                   {post.author?.specialization || "كاتب في مدونة قبس"}
                 </p>
               </div>
             </div>
 
-            {/* Share */}
-            <PostActions title={post.title} />
+            <div className="flex items-center gap-3">
+              <PostActions title={post.title} />
+            </div>
           </div>
         </div>
       </header>
 
-      {/* =========================
-          FEATURED IMAGE
-      ========================== */}
+      {/* FEATURED IMAGE */}
       {post.imageUrl && (
         <div className="mx-auto w-full max-w-[1200px] px-5 pt-8 sm:px-8 sm:pt-10 md:px-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-primary/10 bg-primary/10 shadow-lg md:aspect-[21/9]">
             <img
-              /* ✅ تعديل هنا أيضاً: استخدام الدالة المساعدة لصورة المقال */
               src={getFullImageUrl(post.imageUrl)!}
               alt={post.title}
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
@@ -255,9 +256,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
       )}
 
-      {/* =========================
-          MAIN ARTICLE BODY
-      ========================== */}
+      {/* MAIN ARTICLE BODY */}
       <main className="mx-auto w-full max-w-[1200px] px-5 py-12 sm:px-8 sm:py-16 md:px-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Content */}
@@ -283,7 +282,6 @@ export default async function PostPage({ params }: PostPageProps) {
                 <span className="text-xs font-bold text-primary/70 sm:text-sm">
                   الوسوم:
                 </span>
-
                 {post.hashtags.map((tag) => (
                   <span
                     key={tag}
@@ -298,7 +296,6 @@ export default async function PostPage({ params }: PostPageProps) {
             {/* Author Box */}
             <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-primary/10 bg-primary/5 p-6 sm:flex-row sm:items-start sm:p-8">
               {post.author?.userImage ? (
-                /* ✅ تعديل هنا أيضاً: استخدام الدالة المساعدة في صندوق الكاتب الأسفل */
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-primary/20 bg-primary shadow-sm">
                   <img
                     src={getFullImageUrl(post.author.userImage)!}
@@ -317,15 +314,12 @@ export default async function PostPage({ params }: PostPageProps) {
                 <span className="text-xs font-bold uppercase tracking-wider text-accent">
                   عن الكاتب
                 </span>
-
                 <h3 className="mt-1 text-lg font-bold text-primary sm:text-xl">
                   {post.author?.name || "كاتب غير معروف"}
                 </h3>
-
                 <p className="text-xs font-semibold text-primary/60">
                   {post.author?.specialization || "كاتب في مدونة قبس"}
                 </p>
-
                 {post.author?.bio && (
                   <p className="mt-3 text-sm leading-[1.9] text-dark/80 sm:text-base">
                     {post.author.bio}
@@ -347,7 +341,6 @@ export default async function PostPage({ params }: PostPageProps) {
                   <span className="text-xs font-medium text-accent">
                     العودة
                   </span>
-
                   <span className="mt-1.5 block text-sm font-bold text-primary transition-colors group-hover:text-accent sm:text-base">
                     تصفح جميع المقالات
                   </span>
@@ -356,9 +349,7 @@ export default async function PostPage({ params }: PostPageProps) {
             </nav>
           </div>
 
-          {/* =========================
-              SIDEBAR
-          ========================== */}
+          {/* SIDEBAR */}
           <aside className="lg:col-span-4">
             <div className="sticky top-28 space-y-8">
               {/* Post Information */}
@@ -396,12 +387,103 @@ export default async function PostPage({ params }: PostPageProps) {
                 </dl>
 
                 {/* Share */}
-                <div className="mt-6 border-t border-primary/10 pt-5">
-                  <span className="mb-3 block text-xs font-semibold text-primary/70">
+                <div className="mt-6 border-t border-primary/10 pt-5 space-y-3">
+                  <span className="block text-xs font-semibold text-primary/70">
                     شارك المقال:
                   </span>
-
                   <PostActions title={post.title} />
+                </div>
+
+                {/* ========================================== */}
+                {/* قسم الإبلاغ المنسدل (داخل الصفحة المدمج) */}
+                {/* ========================================== */}
+                <div className="mt-5 border-t border-primary/10 pt-4">
+                  <div className="w-full rounded-2xl border border-rose-500/15 bg-rose-500/5 transition-all duration-300">
+                    {/* رأس قسم الإبلاغ */}
+                    <button
+                      type="button"
+                      onClick={() => setIsReportOpen(!isReportOpen)}
+                      className="flex w-full cursor-pointer items-center justify-between p-3.5 text-xs font-bold text-rose-700 transition-colors hover:text-rose-800"
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                          />
+                        </svg>
+                        <span>الإبلاغ عن محتوى غير مناسب</span>
+                      </div>
+                      <span
+                        className={`transform text-xs transition-transform duration-200 ${
+                          isReportOpen ? "rotate-180" : ""
+                        }`}
+                      >
+                        ▼
+                      </span>
+                    </button>
+
+                    {/* جسم نموذج الإبلاغ المنسدل */}
+                    {isReportOpen && (
+                      <div className="border-t border-rose-500/10 p-3.5 transition-all">
+                        {reportSubmitted ? (
+                          <div className="py-2 text-center">
+                            <p className="text-xs font-bold text-emerald-600">
+                              ✓ تم إرسال البلاغ بنجاح، شكراً لمساعدتنا!
+                            </p>
+                          </div>
+                        ) : (
+                          <form
+                            onSubmit={handleReportSubmit}
+                            className="space-y-3"
+                          >
+                            <div>
+                              <label className="mb-1 block text-xs font-semibold text-primary/70">
+                                سبب الإبلاغ
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={reportReason}
+                                onChange={(e) =>
+                                  setReportReason(e.target.value)
+                                }
+                                placeholder="اكتب تفاصيل الإبلاغ..."
+                                className="w-full resize-none rounded-xl border border-primary/10 bg-background p-2.5 text-xs text-dark placeholder:text-primary/40 focus:border-primary focus:outline-none transition-all"
+                                required
+                              />
+                            </div>
+
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setIsReportOpen(false)}
+                                className="cursor-pointer px-3 py-1.5 text-xs font-semibold text-primary/60 hover:text-primary transition-colors"
+                              >
+                                إلغاء
+                              </button>
+
+                              <button
+                                type="submit"
+                                disabled={isSubmittingReport}
+                                className="cursor-pointer rounded-xl bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 transition-all disabled:opacity-50"
+                              >
+                                {isSubmittingReport
+                                  ? "جاري الإرسال..."
+                                  : "إرسال"}
+                              </button>
+                            </div>
+                          </form>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

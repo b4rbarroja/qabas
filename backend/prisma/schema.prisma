@@ -41,17 +41,30 @@ model User {
   userImage          String?
 }
 
+enum PostStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Post {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   content     String
   hashtags    String[]
   readTime    Int
+  status      PostStatus @default(PENDING)
   imageUrl    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   userId      String?
   authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Reports {
+  id     String @id @default(cuid())
+  postId String
+  reason String
 }
