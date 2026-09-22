@@ -10,6 +10,7 @@ import { useRouter, usePathname } from "next/navigation";
 const baseNavLinks = [
   { href: "/", label: "الرئيسية" },
   { href: "/posts", label: "التدوينات" },
+  { href: "/guide", label: "دليل الاستخدام" },
   { href: "/#about", label: "من نحن" },
 ];
 

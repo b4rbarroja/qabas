@@ -98,6 +98,15 @@ export default function Footer() {
 
               <li>
                 <Link
+                  href="/guide"
+                  className="transition-colors hover:text-accent"
+                >
+                  دليل الاستخدام
+                </Link>
+              </li>
+
+              <li>
+                <Link
                   href="/posts"
                   className="transition-colors hover:text-accent"
                 >
