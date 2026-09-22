@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx src/app.ts",
-    "build": "prisma generate && tsc",
-    "vercel-build": "prisma generate && tsc",
+    "build": "prisma generate",
+    "vercel-build": "prisma generate",
     "start": "node dist/app.js"
   },
   "engines": {
