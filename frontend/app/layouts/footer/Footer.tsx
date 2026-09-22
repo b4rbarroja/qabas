@@ -177,7 +177,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-light/60 sm:text-base">
               <li>
                 <a
-                  href="mailto:hello@qabas.com"
+                  href="mailto:barbarroja@tutamail.com"
                   dir="ltr"
                   className="
                     inline-block
