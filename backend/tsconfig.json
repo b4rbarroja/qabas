@@ -5,8 +5,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "noUncheckedIndexedAccess": true
+    "skipLibCheck": true
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*"]
 }
