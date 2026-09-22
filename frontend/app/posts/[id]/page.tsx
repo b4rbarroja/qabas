@@ -5,6 +5,7 @@ import { API_BASE_URL, apiFetch } from "@/lib/api";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PostActions from "../PostActions";
+import MarkdownRenderer from "../../components/main/markdown/MarkdownRenderer";
 
 interface Post {
   id: string;
@@ -258,20 +259,7 @@ export default function PostPage({ params }: PostPageProps) {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Content */}
           <div className="lg:col-span-8">
-            <div className="space-y-10">
-              {post.content.split("\n").map((paragraph, index) => {
-                if (!paragraph.trim()) return null;
-
-                return (
-                  <p
-                    key={index}
-                    className="text-base leading-[2.2] text-dark/90 sm:text-lg sm:leading-[2.3]"
-                  >
-                    {paragraph.trim()}
-                  </p>
-                );
-              })}
-            </div>
+            <MarkdownRenderer content={post.content} />
 
             {/* Tags */}
             {post.hashtags.length > 0 && (
