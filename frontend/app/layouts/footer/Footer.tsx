@@ -188,20 +188,12 @@ export default function Footer() {
                     hover:text-accent
                   "
                 >
-                  hello@qabas.com
+                  barbarroja@tutamail.com
                 </a>
               </li>
 
               <li>
-                <a href="#" className="transition-colors hover:text-accent">
-                  تويتر
-                </a>
-              </li>
-
-              <li>
-                <a href="#" className="transition-colors hover:text-accent">
-                  إنستغرام
-                </a>
+                <a href="#contact">فورم التواصل</a>
               </li>
             </ul>
           </div>

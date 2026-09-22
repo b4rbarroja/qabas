@@ -50,7 +50,6 @@ const STEPS = [
     title: "أنشئ حسابك مجاناً",
     description:
       "افتح صفحة «سجل معنا» وأدخل اسمك وبريدك وكلمة المرور وتخصصك. في أقل من دقيقة يكون حسابك جاهزاً، وتحصل على لوحة تحكمك الخاصة.",
-    icon: PenLine,
     href: "/register",
     hrefLabel: "أنشئ حسابك الآن",
   },
@@ -59,7 +58,6 @@ const STEPS = [
     title: "قم بتنسيق مقالتك بصيغة Md",
     description:
       "بعد كتابة مقالتك قم بالاستعانة بالذكاء الاصطناعي وقل له : أريد تنسيق هذه المقالة بصيغة Md ثم قم بنسخ النص لنشره في منصتنا بكل أريحية.",
-    icon: Sparkles,
     href: null,
     hrefLabel: null,
   },
@@ -68,7 +66,6 @@ const STEPS = [
     title: "الصق المحتوى وأضف صورة الغلاف",
     description:
       "من لوحة التحكم اضغط «إنشاء مقال»، ثم الصق نص Markdown في حقل المحتوى، وأضف العنوان والوسوم. لصق رابط صورة الغلاف (رابط مباشر ينتهي بـ ‎.png أو ‎.jpg)، ثم احفظ المقال.",
-    icon: ImageIcon,
     href: "/dashboard",
     hrefLabel: "اذهب إلى لوحة التحكم",
   },
@@ -77,7 +74,6 @@ const STEPS = [
     title: "انشر وشارك مقالتك",
     description:
       "بعد نشر المقالة ووضع رابط الصورة يمكنك نشر المقالة وستظهر مباشرة في صفحة المقالات، ولكن سوف تخضع للمراجعة العلمية حتى يتم الحصول على شارة Approved",
-    icon: Send,
     href: "/posts",
     hrefLabel: "تصفح المقالات",
   },
@@ -201,7 +197,6 @@ export default function GuidePage() {
 
           <div className="space-y-6">
             {STEPS.map((step) => {
-              const Icon = step.icon;
               return (
                 <div
                   key={step.number}
@@ -214,7 +209,6 @@ export default function GuidePage() {
 
                   <div className="flex-1">
                     <div className="flex items-center gap-2.5">
-                      <Icon className="h-5 w-5 text-accent" />
                       <h3 className="text-lg font-bold text-primary sm:text-xl">
                         {step.title}
                       </h3>
