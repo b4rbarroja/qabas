@@ -23,7 +23,7 @@ const allowedOrigins = [
   ...(
     process.env.FRONTEND_URL ||
     process.env.CLIENT_URL ||
-    "https://qabas-druz.vercel.app"
+    "https://qabasun.vercel.app"
   )
     .split(",")
     .map((origin) => origin.trim())
