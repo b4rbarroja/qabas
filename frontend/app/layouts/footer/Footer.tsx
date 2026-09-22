@@ -193,7 +193,7 @@ export default function Footer() {
               </li>
 
               <li>
-                <a href="#contact">فورم التواصل</a>
+                <a href="/#contact">فورم التواصل</a>
               </li>
             </ul>
           </div>
