@@ -5,7 +5,7 @@ import { API_BASE_URL, apiFetch } from "@/lib/api";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const baseNavLinks = [
   { href: "/", label: "الرئيسية" },
@@ -20,12 +20,15 @@ const authLinks = [
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [userRole, setUserRole] = useState<string>("USER");
 
   useEffect(() => {
+    let cancelled = false;
+
     const checkAuth = async () => {
       try {
         const response = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
@@ -35,6 +38,8 @@ export default function Navbar() {
           },
           credentials: "include",
         });
+
+        if (cancelled) return;
 
         if (response.ok) {
           const data = await response.json();
@@ -48,14 +53,22 @@ export default function Navbar() {
         }
       } catch (error) {
         console.error("خطأ في التحقق من الجلسة:", error);
-        setIsLoggedIn(false);
+        if (!cancelled) {
+          setIsLoggedIn(false);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     checkAuth();
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   // تحديد مسار لوحة التحكم بناءً على دور المستخدم
   const dashboardPath = userRole === "ADMIN" ? "/addash" : "/dashboard";
