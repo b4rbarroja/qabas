@@ -12,10 +12,13 @@ import currentUser from "./routes/me.js";
 import profileRouter from "./routes/profile.js";
 import pendingPosts from "./routes/pending.js";
 import reports from "./routes/report.js";
+
 const app: Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
+// ملاحظة مهمة بشأن الملفات المرفوعة (/uploads) تجدها أسفل الكود
 app.use("/uploads", express.static("uploads"));
 
 app.use(
@@ -37,9 +40,12 @@ app.use("/api/auth/profile", profileRouter);
 app.use("/api/pendingPosts", pendingPosts);
 app.use("/api/report", reports);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+// تشغيل الـ PORT فقط أثناء التطوير المحلي (Local Development)
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Backend server running on port ${PORT}`);
+  });
+}
 
 export default app;
