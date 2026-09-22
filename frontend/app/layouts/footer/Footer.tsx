@@ -145,34 +145,16 @@ export default function Footer() {
                 sm:text-lg
               "
             >
-              التصنيفات
+              التوثيق والدلائل
             </h4>
 
             <ul className="space-y-3 text-sm text-light/60 sm:text-base">
               <li>
                 <Link
-                  href="/tags/linguistics"
+                  href="https://qabasun.vercel.app/guide"
                   className="transition-colors hover:text-accent"
                 >
-                  لسانيات
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/tags/history"
-                  className="transition-colors hover:text-accent"
-                >
-                  تاريخ العلوم
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/tags/tech"
-                  className="transition-colors hover:text-accent"
-                >
-                  اللغويات والتقنية
+                  كيف تنشر مقالك؟
                 </Link>
               </li>
             </ul>

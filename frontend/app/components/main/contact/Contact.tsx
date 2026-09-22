@@ -182,7 +182,7 @@ export default function ContactUs() {
                 </h4>
 
                 <Link
-                  href="mailto:contact@qabas.com"
+                  href="mailto:barbarroja@tutamail.com"
                   dir="ltr"
                   className="
                     mt-1 block
@@ -197,7 +197,7 @@ export default function ContactUs() {
                     sm:text-base
                   "
                 >
-                  contact@qabas.com
+                  barbarroja@tutamail.com
                 </Link>
               </div>
             </div>
