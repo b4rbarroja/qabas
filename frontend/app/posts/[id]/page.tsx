@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL, apiUrl } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -31,12 +31,6 @@ interface PostPageProps {
   }>;
 }
 
-// دالة مساعدة لتحويل الرابط النسبي إلى مطلق
-const getFullImageUrl = (url: string | null) => {
-  if (!url) return null;
-  return apiUrl(url);
-};
-
 export default function PostPage({ params }: PostPageProps) {
   const [postId, setPostId] = useState<string | null>(null);
   const [post, setPost] = useState<Post | null>(null);
@@ -55,7 +49,7 @@ export default function PostPage({ params }: PostPageProps) {
         const resolvedParams = await params;
         setPostId(resolvedParams.id);
 
-        const response = await fetch(
+        const response = await apiFetch(
           `${API_BASE_URL}/api/posts/${resolvedParams.id}`,
           { cache: "no-store" },
         );
@@ -84,7 +78,7 @@ export default function PostPage({ params }: PostPageProps) {
 
     setIsSubmittingReport(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/report`, {
+      const res = await apiFetch(`${API_BASE_URL}/api/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -215,7 +209,7 @@ export default function PostPage({ params }: PostPageProps) {
               {post.author?.userImage ? (
                 <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-primary/20 bg-primary">
                   <img
-                    src={getFullImageUrl(post.author.userImage)!}
+                    src={post.author.userImage}
                     alt={post.author.name}
                     className="h-full w-full object-cover grayscale"
                     loading="eager"
@@ -249,7 +243,7 @@ export default function PostPage({ params }: PostPageProps) {
         <div className="mx-auto w-full max-w-[1200px] px-5 pt-8 sm:px-8 sm:pt-10 md:px-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-primary/10 bg-primary/10 shadow-lg md:aspect-[21/9]">
             <img
-              src={getFullImageUrl(post.imageUrl)!}
+              src={post.imageUrl}
               alt={post.title}
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
             />
@@ -299,7 +293,7 @@ export default function PostPage({ params }: PostPageProps) {
               {post.author?.userImage ? (
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-primary/20 bg-primary shadow-sm">
                   <img
-                    src={getFullImageUrl(post.author.userImage)!}
+                    src={post.author.userImage}
                     alt={post.author.name}
                     className="h-full w-full object-cover grayscale"
                     loading="lazy"

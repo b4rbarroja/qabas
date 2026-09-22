@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -33,7 +33,7 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/login`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,29 +47,16 @@ export default function LoginForm() {
       });
 
       if (!response.ok) {
+        setIsSubmitting(false);
         alert("Please try again, error happened!");
         return;
-      } else if (response.ok) {
-        try {
-          const checkRole = async () => {
-            const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-              method: "GET",
-              credentials: "include",
-            });
-            const data = await response.json();
-            const role = data.user.role;
-
-            if (role == "USER") {
-              router.push("/dashboard");
-            } else if (role == "ADMIN") {
-              router.push("/addash");
-            }
-          };
-          checkRole();
-        } catch (error) {
-          alert(error);
-        }
       }
+
+      const data = await response.json().catch(() => null);
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+      router.push(data?.role === "ADMIN" ? "/addash" : "/dashboard");
     } catch (error) {
       console.log(error);
       alert(error);

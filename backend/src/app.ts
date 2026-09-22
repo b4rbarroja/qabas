@@ -18,12 +18,27 @@ const app: Express = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// ملاحظة مهمة بشأن الملفات المرفوعة (/uploads) تجدها أسفل الكود
-app.use("/uploads", express.static("uploads"));
+const allowedOrigins = [
+  ...(
+    process.env.FRONTEND_URL ||
+    process.env.CLIENT_URL ||
+    "https://qabas-druz.vercel.app"
+  )
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+  "http://localhost:3000",
+];
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
   }),
 );

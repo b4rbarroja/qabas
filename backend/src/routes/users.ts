@@ -1,25 +1,10 @@
 import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
-import multer from "multer";
-import path from "path";
 import { type AuthRequest } from "../types/auth.js";
+import { isValidHttpUrl } from "../lib/url.js";
 
 const router = Router();
-
-// إعداد التخزين لـ Multer (Storage Configuration)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // المجلد الذي تحفظ فيه الصور
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-  },
-});
-
-const upload = multer({ storage });
 
 // GET /api/users - جلب قائمة المستخدمين
 router.get("/", authMiddleWare, async (req: AuthRequest, res: Response) => {
@@ -90,8 +75,7 @@ router.get("/cu", authMiddleWare, async (req: AuthRequest, res: Response) => {
 
 router.put(
   "/profile",
-  upload.single("userImage"), // 1. استخراج الملف والـ FormData أولاً
-  authMiddleWare, // 2. التحقق من التوكن بعد معالجة الـ Body/Headers
+  authMiddleWare,
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       // الـ user يكون متاحاً هنا بعد المرور على authMiddleWare
@@ -105,7 +89,7 @@ router.put(
         return;
       }
 
-      const { name, specialization, bio, portfolioUrl } = req.body;
+      const { name, specialization, bio, portfolioUrl, userImage } = req.body;
 
       const updateData: Record<string, any> = {};
 
@@ -115,8 +99,18 @@ router.put(
       if (bio !== undefined) updateData.bio = bio;
       if (portfolioUrl !== undefined) updateData.portfolioUrl = portfolioUrl;
 
-      if (req.file) {
-        updateData.userImage = `/uploads/${req.file.filename}`;
+      if (userImage !== undefined) {
+        if (userImage === "" || userImage === null) {
+          updateData.userImage = null;
+        } else if (!isValidHttpUrl(userImage)) {
+          res.status(400).json({
+            success: false,
+            message: "رابط الصورة الشخصية غير صالح",
+          });
+          return;
+        } else {
+          updateData.userImage = userImage;
+        }
       }
 
       const updatedUser = await prisma.user.update({

@@ -1,21 +1,9 @@
 import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
-import multer from "multer";
-import path from "path";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
 import { type AuthRequest } from "../types/auth.js";
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
+import { isValidHttpUrl } from "../lib/url.js";
 
 const router = Router();
 
@@ -29,10 +17,9 @@ function calculateReadTime(content: string) {
 router.post(
   "/",
   authMiddleWare,
-  upload.single("image"),
   async (req: AuthRequest, res: Response): Promise<any> => {
     try {
-      let { title, description, content, hashtags } = req.body;
+      let { title, description, content, hashtags, imageUrl } = req.body;
       let parsedHashtags = hashtags || [];
       if (typeof hashtags === "string") {
         try {
@@ -42,15 +29,20 @@ router.post(
         }
       }
 
-      const imageUrl = req.file
-        ? `http://localhost:5000/uploads/${req.file.filename}`
-        : req.body.imageUrl;
       const userId = req.user?.userId;
 
       if (!title || !content || !userId) {
         return res.status(400).json({
           error: "يرجى إرسال العنوان والمحتوى",
         });
+      }
+
+      if (imageUrl) {
+        if (!isValidHttpUrl(imageUrl)) {
+          return res.status(400).json({ error: "رابط الصورة غير صالح" });
+        }
+      } else {
+        imageUrl = null;
       }
 
       const readTime = calculateReadTime(content);
@@ -198,7 +190,6 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
 router.put(
   "/:id",
   authMiddleWare,
-  upload.single("image"),
   async (req: AuthRequest, res: Response) => {
     try {
       const id = req.params.id as string;
@@ -226,9 +217,17 @@ router.put(
         }
       }
 
-      const imageUrl = req.file
-        ? `http://localhost:5000/uploads/${req.file.filename}`
-        : existingPost.imageUrl;
+      let imageUrl = existingPost.imageUrl;
+      if (req.body.imageUrl !== undefined) {
+        const value = req.body.imageUrl;
+        if (value === "" || value === null) {
+          imageUrl = null;
+        } else if (!isValidHttpUrl(value)) {
+          return res.status(400).json({ error: "رابط الصورة غير صالح" });
+        } else {
+          imageUrl = value;
+        }
+      }
 
       const readTime = content
         ? calculateReadTime(content)

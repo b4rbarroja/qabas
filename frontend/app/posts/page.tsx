@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL, apiUrl } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export default function PostsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/posts`);
+        const response = await apiFetch(`${API_BASE_URL}/api/posts`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
@@ -163,7 +163,7 @@ export default function PostsPage() {
                   <div className="relative aspect-[16/10] overflow-hidden bg-primary/5">
                     {post.imageUrl ? (
                       <img
-                        src={apiUrl(post.imageUrl)}
+                        src={post.imageUrl}
                         alt={post.title}
                         className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
                       />

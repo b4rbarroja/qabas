@@ -7,7 +7,12 @@ const authMiddleWare = (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies?.token;
+  const authHeader = req.headers.authorization;
+  const bearerToken =
+    typeof authHeader === "string" && authHeader.startsWith("Bearer ")
+      ? authHeader.slice("Bearer ".length)
+      : undefined;
+  const token = bearerToken || req.cookies?.token;
 
   if (!token) {
     return res.status(401).json({ error: "Access denied. Token missing." });

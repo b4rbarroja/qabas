@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -32,10 +32,8 @@ export default function RegisterForm() {
     portfolioUrl: "",
     agreeTerms: false,
     agreeOriginality: false,
+    userImage: "",
   });
-
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -59,14 +57,6 @@ export default function RegisterForm() {
         };
       }
     });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,6 +91,13 @@ export default function RegisterForm() {
       setErrorMessage("يرجى كتابة نبذة تعريفية مختصرة عن الكاتب.");
       return;
     }
+    if (
+      formData.userImage &&
+      !/^https?:\/\/\S+$/i.test(formData.userImage.trim())
+    ) {
+      setErrorMessage("رابط الصورة الشخصية غير صالح.");
+      return;
+    }
     if (!formData.agreeTerms || !formData.agreeOriginality) {
       setErrorMessage("يرجى الموافقة على شروط النشر وميثاق الأصالة المعرفية.");
       return;
@@ -109,31 +106,22 @@ export default function RegisterForm() {
     setIsSubmitting(true);
 
     try {
-      const registerPayload = new FormData();
-      registerPayload.append("name", formData.name);
-      registerPayload.append("email", formData.email);
-      registerPayload.append("password", formData.password);
-      registerPayload.append("specialization", formData.specialization);
-      registerPayload.append("bio", formData.bio);
-      registerPayload.append("portfolioUrl", formData.portfolioUrl);
-      registerPayload.append(
-        "selectedCategories",
-        JSON.stringify(formData.selectedCategories),
-      );
-      registerPayload.append("agreeTerms", String(formData.agreeTerms));
-      registerPayload.append(
-        "agreeOriginality",
-        String(formData.agreeOriginality),
-      );
-
-      if (imageFile) {
-        registerPayload.append("userImage", imageFile);
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/register`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/register`, {
         method: "POST",
         credentials: "include",
-        body: registerPayload,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          specialization: formData.specialization,
+          bio: formData.bio,
+          portfolioUrl: formData.portfolioUrl,
+          selectedCategories: formData.selectedCategories,
+          agreeTerms: formData.agreeTerms,
+          agreeOriginality: formData.agreeOriginality,
+          userImage: formData.userImage.trim() || null,
+        }),
       });
 
       if (!response.ok) {
@@ -437,20 +425,23 @@ export default function RegisterForm() {
                     />
                   </div>
 
-                  {/* File Upload for userImage */}
+                  {/* Profile image URL */}
                   <div>
                     <label
                       htmlFor="userImage"
                       className="mb-1.5 block text-xs font-semibold text-primary sm:text-sm"
                     >
-                      الصورة الشخصية (اختر ملف صورة من جهازك)
+                      الصورة الشخصية (رابط صورة مباشر)
                     </label>
                     <input
                       id="userImage"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-2.5 text-xs text-primary file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-light hover:file:bg-accent transition-all cursor-pointer"
+                      type="url"
+                      value={formData.userImage}
+                      onChange={(e) =>
+                        setFormData({ ...formData, userImage: e.target.value })
+                      }
+                      placeholder="https://example.com/photo.jpg"
+                      className="w-full rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-left text-dark placeholder:text-primary/40 focus:border-primary focus:bg-background focus:outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -561,9 +552,9 @@ export default function RegisterForm() {
             <div className="rounded-xl border border-primary/10 bg-background p-5 shadow-xs">
               <div className="flex items-center gap-3.5">
                 <div className="relative flex h-13 w-13 shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary text-light font-bold text-lg shadow-sm">
-                  {imagePreview ? (
+                  {formData.userImage ? (
                     <img
-                      src={imagePreview}
+                      src={formData.userImage}
                       alt={formData.name || "صورة الكاتب"}
                       className="h-full w-full object-cover"
                     />

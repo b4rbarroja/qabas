@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL, apiUrl } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 import React, { useEffect, useState } from "react";
 import {
   FileText,
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     // 1. جلب بيانات الأعضاء
     const getAllUsers = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/users`, {
           method: "GET",
           credentials: "include",
         });
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     // 2. جلب جميع المقالات المنشورة
     const getAllPosts = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/posts`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/posts`, {
           method: "GET",
           credentials: "include",
         });
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
     const getPendingPosts = async () => {
       setLoadingPending(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/pendingPosts`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/pendingPosts`, {
           method: "GET",
           credentials: "include",
         });
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
     const getReports = async () => {
       setLoadingReports(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/report`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/report`, {
           method: "GET",
           credentials: "include",
         });
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
     // 5. التحقق من صلاحية الأدمن ثم تشغيل جلب البيانات
     const checkAdmin = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
           method: "GET",
           credentials: "include",
         });
@@ -193,7 +193,8 @@ export default function AdminDashboard() {
   // دالة تسجيل الخروج
   const handleLogout = async () => {
     try {
-      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      localStorage.removeItem("token");
+      await apiFetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -207,7 +208,7 @@ export default function AdminDashboard() {
   // دالة قبول المقال
   const handleApprovePost = async (postId: string | number) => {
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${postId}/status`,
         {
           method: "PATCH",
@@ -244,7 +245,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${postId}/status`,
         {
           method: "PATCH",
@@ -275,7 +276,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/users/${userId}`,
         {
           method: "DELETE",
@@ -304,7 +305,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${postId}`,
         {
           method: "DELETE",
@@ -331,7 +332,7 @@ export default function AdminDashboard() {
   // دالة حذف البلاغ الفردي (باستخدام معرف البلاغ id - الطريقة الثانية)
   const handleDeleteReport = async (reportId: string | number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/report`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/report`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -368,7 +369,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${postId}`,
         {
           method: "DELETE",
@@ -861,7 +862,7 @@ export default function AdminDashboard() {
                         <td className="p-3.5 px-4 font-semibold text-[#111111] flex items-center gap-2.5">
                           {u.userImage && (
                             <img
-                              src={apiUrl(u.userImage)}
+                              src={u.userImage}
                               alt={u.name}
                               className="w-8 h-8 rounded-full object-cover border border-[#e0ded6]"
                             />

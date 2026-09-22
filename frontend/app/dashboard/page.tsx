@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL, apiUrl } from "@/lib/api";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import {
   PenTool,
@@ -55,8 +55,8 @@ export default function UserDashboard() {
     description: "",
     hashtags: "",
     content: "",
+    imageUrl: "",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // حالة بيانات البروفايل وصورة الشخصية
   const [profileData, setProfileData] = useState({
@@ -68,7 +68,6 @@ export default function UserDashboard() {
     portfolioUrl: "",
     userImage: "",
   });
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   // حالات مودال التعديل (Edit Modal State)
   const [editingPost, setEditingPost] = useState<any | null>(null);
@@ -77,8 +76,8 @@ export default function UserDashboard() {
     description: "",
     hashtags: "",
     content: "",
+    imageUrl: "",
   });
-  const [editImageFile, setEditImageFile] = useState<File | null>(null);
 
   interface UserProfileData {
     id: string;
@@ -94,7 +93,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const fetchingDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users/cu`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/users/cu`, {
           method: "GET",
           credentials: "include",
         });
@@ -113,18 +112,6 @@ export default function UserDashboard() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
-    }
-  };
-
-  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfileImageFile(e.target.files[0]);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -133,20 +120,18 @@ export default function UserDashboard() {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    const postPayload = new FormData();
-    postPayload.append("title", formData.title);
-    postPayload.append("description", formData.description);
-    postPayload.append("content", formData.content);
-    postPayload.append("hashtags", JSON.stringify(formattedHashtags));
-    if (imageFile) {
-      postPayload.append("image", imageFile);
-    }
-
     try {
-      const response = await fetch(`${API_BASE_URL}/api/posts`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/posts`, {
         method: "POST",
         credentials: "include",
-        body: postPayload,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          content: formData.content,
+          hashtags: JSON.stringify(formattedHashtags),
+          imageUrl: formData.imageUrl.trim() || null,
+        }),
       });
 
       if (!response.ok) {
@@ -161,8 +146,8 @@ export default function UserDashboard() {
         description: "",
         hashtags: "",
         content: "",
+        imageUrl: "",
       });
-      setImageFile(null);
       setActiveTab("my-posts");
     } catch (error: any) {
       alert(`خطأ: ${error.message || error}`);
@@ -177,7 +162,7 @@ export default function UserDashboard() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${postId}`,
         {
           method: "DELETE",
@@ -209,8 +194,8 @@ export default function UserDashboard() {
       description: post.description || "",
       hashtags: Array.isArray(post.hashtags) ? post.hashtags.join(", ") : "",
       content: post.content || "",
+      imageUrl: post.imageUrl || "",
     });
-    setEditImageFile(null);
   };
 
   // إرسال طلب التعديل
@@ -223,22 +208,20 @@ export default function UserDashboard() {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    const updatePayload = new FormData();
-    updatePayload.append("title", editFormData.title);
-    updatePayload.append("description", editFormData.description);
-    updatePayload.append("content", editFormData.content);
-    updatePayload.append("hashtags", JSON.stringify(formattedHashtags));
-    if (editImageFile) {
-      updatePayload.append("image", editImageFile);
-    }
-
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${API_BASE_URL}/api/posts/${editingPost.id}`,
         {
           method: "PUT",
           credentials: "include",
-          body: updatePayload,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: editFormData.title,
+            description: editFormData.description,
+            content: editFormData.content,
+            hashtags: JSON.stringify(formattedHashtags),
+            imageUrl: editFormData.imageUrl.trim(),
+          }),
         },
       );
 
@@ -264,7 +247,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const cookieCheck = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        const response = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -289,7 +272,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const findMyPosts = async () => {
       try {
-        const response = await fetch(
+        const response = await apiFetch(
           `${API_BASE_URL}/api/posts/my-posts`,
           {
             method: "GET",
@@ -318,7 +301,7 @@ export default function UserDashboard() {
       const fetchProfile = async () => {
         setIsLoadingProfile(true);
         try {
-          const response = await fetch(
+          const response = await apiFetch(
             `${API_BASE_URL}/api/users/profile`,
             {
               method: "GET",
@@ -354,7 +337,8 @@ export default function UserDashboard() {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/logout`, {
+      localStorage.removeItem("token");
+      const response = await apiFetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -611,21 +595,16 @@ export default function UserDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        صورة الغلاف (ملف من جهازك)
+                        صورة الغلاف (رابط صورة مباشر)
                       </label>
-                      <div className="relative border border-gray-200 rounded-xl p-2 bg-white flex items-center gap-3">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
-                        />
-                      </div>
-                      {imageFile && (
-                        <p className="text-xs text-green-600 mt-1 font-medium">
-                          ✓ تم اختيار: {imageFile.name}
-                        </p>
-                      )}
+                      <input
+                        type="url"
+                        name="imageUrl"
+                        value={formData.imageUrl}
+                        onChange={handleChange}
+                        placeholder="https://example.com/cover.jpg"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                      />
                     </div>
 
                     <div>
@@ -693,7 +672,7 @@ export default function UserDashboard() {
                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 border border-gray-300 flex items-center justify-center">
                           {me?.userImage ? (
                             <img
-                              src={apiUrl(me.userImage)}
+                              src={me.userImage}
                               alt={me.name}
                               className="w-full h-full object-cover"
                             />
@@ -765,28 +744,19 @@ export default function UserDashboard() {
                     onSubmit={async (e) => {
                       e.preventDefault();
                       try {
-                        const profilePayload = new FormData();
-                        profilePayload.append("name", profileData.name);
-                        profilePayload.append(
-                          "specialization",
-                          profileData.specialization,
-                        );
-                        profilePayload.append("bio", profileData.bio);
-                        profilePayload.append(
-                          "portfolioUrl",
-                          profileData.portfolioUrl,
-                        );
-
-                        if (profileImageFile) {
-                          profilePayload.append("userImage", profileImageFile);
-                        }
-
-                        const response = await fetch(
+                        const response = await apiFetch(
                           `${API_BASE_URL}/api/users/profile`,
                           {
                             method: "PUT",
                             credentials: "include",
-                            body: profilePayload,
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              name: profileData.name,
+                              specialization: profileData.specialization,
+                              bio: profileData.bio,
+                              portfolioUrl: profileData.portfolioUrl,
+                              userImage: profileData.userImage.trim(),
+                            }),
                           },
                         );
 
@@ -812,24 +782,23 @@ export default function UserDashboard() {
                       }
                     }}
                   >
-                    {/* رفع صورة البروفايل */}
+                    {/* صورة البروفايل (رابط) */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        الصورة الشخصية (ملف من جهازك)
+                        الصورة الشخصية (رابط صورة مباشر)
                       </label>
-                      <div className="relative border border-gray-200 rounded-xl p-2 bg-white flex items-center gap-3">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleProfileImageChange}
-                          className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
-                        />
-                      </div>
-                      {profileImageFile && (
-                        <p className="text-xs text-green-600 mt-1 font-medium">
-                          ✓ تم اختيار: {profileImageFile.name}
-                        </p>
-                      )}
+                      <input
+                        type="url"
+                        value={profileData.userImage}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            userImage: e.target.value,
+                          })
+                        }
+                        placeholder="https://example.com/photo.jpg"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
+                      />
                     </div>
 
                     {/* الاسم الكامل */}
@@ -974,17 +943,19 @@ export default function UserDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    تحديث صورة الغلاف (اختياري)
+                    صورة الغلاف (رابط صورة مباشر)
                   </label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setEditImageFile(e.target.files[0]);
-                      }
-                    }}
-                    className="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                    type="url"
+                    value={editFormData.imageUrl}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        imageUrl: e.target.value,
+                      })
+                    }
+                    placeholder="https://example.com/cover.jpg"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
                   />
                 </div>
 
