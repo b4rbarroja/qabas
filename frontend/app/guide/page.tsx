@@ -17,33 +17,6 @@ export const metadata: Metadata = {
     "دليل بسيط خطوة بخطوة يشرح كيف تنشئ حسابك، تكتب مقالتك، وتنشرها على منصة قبس المعرفية.",
 };
 
-const FEATURES = [
-  {
-    icon: PenLine,
-    title: "تحرير بلا تعقيد",
-    description:
-      "لوحة تحكم هادئة وسهلة تركزك على الكتابة فقط، دون قوائم معقدة أو إعدادات تربكك.",
-  },
-  {
-    icon: BookOpen,
-    title: "قراءة مريحة",
-    description:
-      "واجهة قراءة نظيفة وأنيقة تعرض مقالك بتنسيق جميل: عناوين، قوائم، ومربعات كود واضحة.",
-  },
-  {
-    icon: Rocket,
-    title: "نشر مباشر",
-    description:
-      "من لحظة الحفظ حتى وصول المقال إلى القرّاء، كل شيء يحدث داخل حسابك مباشرة.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "جودة مضمونة",
-    description:
-      "كل مقال يمر بمراجعة سريعة قبل نشره، حتى تبقى المنصة موثوقة ومفيدة للجميع.",
-  },
-];
-
 const STEPS = [
   {
     number: "01",
@@ -157,28 +130,6 @@ export default function GuidePage() {
             <p className="mt-3 text-base leading-8 text-dark/60">
               مزايا صُمّمت لتجعل الكتابة والقراءة أسهل مما تتخيل.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={feature.title}
-                  className="group rounded-2xl border border-primary/10 bg-background p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
-                >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/5 text-primary transition-colors group-hover:bg-primary group-hover:text-light">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-primary">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-7 text-dark/60">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
