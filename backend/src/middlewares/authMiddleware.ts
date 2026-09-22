@@ -1,16 +1,9 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-// 1. تصحيح الـ Interface لتطابق البيانات الفعلية في التوكن
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-  };
-}
+import { type AuthRequest } from "../types/auth.js";
 
 const authMiddleWare = (
-  req: AuthenticatedRequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) => {

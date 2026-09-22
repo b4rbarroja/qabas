@@ -1,8 +1,9 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import path from "path";
+import { type AuthRequest } from "../types/auth.js";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // GET /api/users - جلب قائمة المستخدمين
-router.get("/", authMiddleWare, async (req: Request, res: Response) => {
+router.get("/", authMiddleWare, async (req: AuthRequest, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -53,9 +54,9 @@ router.get("/", authMiddleWare, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/cu", authMiddleWare, async (req: Request, res: Response) => {
+router.get("/cu", authMiddleWare, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = (req as any).user?.userId || (req as any).user?.id;
+    const userId = req.user?.userId;
 
     if (!userId) {
       return res.status(401).json({ error: "غير مصرح لك بالوصول لهذا" });
@@ -91,13 +92,10 @@ router.put(
   "/profile",
   upload.single("userImage"), // 1. استخراج الملف والـ FormData أولاً
   authMiddleWare, // 2. التحقق من التوكن بعد معالجة الـ Body/Headers
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       // الـ user يكون متاحاً هنا بعد المرور على authMiddleWare
-      const userId =
-        (req as any).user?.id ||
-        (req as any).user?.userId ||
-        (req as any).user?.uid;
+      const userId = req.user?.userId;
 
       if (!userId) {
         res.status(401).json({
@@ -156,10 +154,10 @@ router.put(
 router.delete(
   "/:id",
   authMiddleWare,
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      const currentUserId = (req as any).user?.userId || (req as any).user?.id;
-      const currentUserRole = (req as any).user?.role;
+      const currentUserId = req.user?.userId;
+      const currentUserRole = req.user?.role;
       const targetUserId = req.params.id as string;
 
       // التحقق من أن المجرّي للعملية هو أدمن

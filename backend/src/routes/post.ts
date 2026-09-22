@@ -1,9 +1,10 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import path from "path";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import { type AuthRequest } from "../types/auth.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,7 +30,7 @@ router.post(
   "/",
   authMiddleWare,
   upload.single("image"),
-  async (req: Request, res: Response): Promise<any> => {
+  async (req: AuthRequest, res: Response): Promise<any> => {
     try {
       let { title, description, content, hashtags } = req.body;
       let parsedHashtags = hashtags || [];
@@ -89,7 +90,7 @@ router.post(
   },
 );
 
-router.get("/", async (req: Request, res: Response): Promise<any> => {
+router.get("/", async (req: AuthRequest, res: Response): Promise<any> => {
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -122,7 +123,7 @@ router.get("/", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-router.get("/my-posts", authMiddleWare, async (req: Request, res: Response) => {
+router.get("/my-posts", authMiddleWare, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.userId;
 
@@ -159,7 +160,7 @@ router.get("/my-posts", authMiddleWare, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
 
@@ -198,7 +199,7 @@ router.put(
   "/:id",
   authMiddleWare,
   upload.single("image"),
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const id = req.params.id as string;
       let { title, description, content, hashtags } = req.body;
@@ -266,7 +267,7 @@ router.put(
   },
 );
 
-router.delete("/:id", authMiddleWare, async (req: Request, res: Response) => {
+router.delete("/:id", authMiddleWare, async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
     const currentUserId = req.user?.userId;

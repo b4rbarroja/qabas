@@ -1,9 +1,10 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import authMiddleWare from "../middlewares/authMiddleware.js";
+import { type AuthRequest } from "../types/auth.js";
 
 const router = Router();
 
-router.put("/", authMiddleWare, async (req: Request, res: Response) => {
+router.put("/", authMiddleWare, async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     return res.status(401).json({ message: "غير مصرح لك" });
   }
