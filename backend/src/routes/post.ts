@@ -1,9 +1,9 @@
 import { Router, type Request, type Response } from "express";
-import { prisma } from "../lib/prisma";
-import authMiddleWare from "../middlewares/authMiddleware";
+import { prisma } from "../lib/prisma.js";
+import authMiddleWare from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import path from "path";
-import { adminMiddleware } from "../middlewares/adminMiddleware";
+import { adminMiddleware } from "../middlewares/adminMiddleware.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

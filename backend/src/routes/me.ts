@@ -1,7 +1,7 @@
 import { Router, type Response } from "express";
 import authMiddleWare, {
   type AuthenticatedRequest,
-} from "../middlewares/authMiddleware";
+} from "../middlewares/authMiddleware.js";
 
 const router = Router();
 

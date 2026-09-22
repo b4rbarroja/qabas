@@ -1,8 +1,7 @@
 import { Router, type Request, type Response } from "express";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import authMiddleWare from "../middlewares/authMiddleware";
 const router = Router();
 
 router.post("/", async (req: Request, res: Response) => {
