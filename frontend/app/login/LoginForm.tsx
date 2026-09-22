@@ -1,5 +1,7 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
+
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -31,7 +33,7 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +52,7 @@ export default function LoginForm() {
       } else if (response.ok) {
         try {
           const checkRole = async () => {
-            const response = await fetch("http://localhost:5000/api/auth/me", {
+            const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
               method: "GET",
               credentials: "include",
             });

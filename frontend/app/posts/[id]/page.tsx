@@ -1,5 +1,7 @@
 "use client";
 
+import { API_BASE_URL, apiUrl } from "@/lib/api";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PostActions from "../PostActions";
@@ -32,8 +34,7 @@ interface PostPageProps {
 // دالة مساعدة لتحويل الرابط النسبي إلى مطلق
 const getFullImageUrl = (url: string | null) => {
   if (!url) return null;
-  if (url.startsWith("http")) return url;
-  return `http://localhost:5000${url}`;
+  return apiUrl(url);
 };
 
 export default function PostPage({ params }: PostPageProps) {
@@ -55,7 +56,7 @@ export default function PostPage({ params }: PostPageProps) {
         setPostId(resolvedParams.id);
 
         const response = await fetch(
-          `http://localhost:5000/api/posts/${resolvedParams.id}`,
+          `${API_BASE_URL}/api/posts/${resolvedParams.id}`,
           { cache: "no-store" },
         );
 
@@ -83,7 +84,7 @@ export default function PostPage({ params }: PostPageProps) {
 
     setIsSubmittingReport(true);
     try {
-      const res = await fetch("http://localhost:5000/api/report", {
+      const res = await fetch(`${API_BASE_URL}/api/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

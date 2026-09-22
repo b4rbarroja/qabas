@@ -1,5 +1,7 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
+
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -128,7 +130,7 @@ export default function RegisterForm() {
         registerPayload.append("userImage", imageFile);
       }
 
-      const response = await fetch("http://localhost:5000/api/register", {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: "POST",
         credentials: "include",
         body: registerPayload,

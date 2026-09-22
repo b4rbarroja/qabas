@@ -1,5 +1,7 @@
 "use client";
 
+import { API_BASE_URL, apiUrl } from "@/lib/api";
+
 import {
   PenTool,
   BookOpen,
@@ -92,7 +94,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const fetchingDetails = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/users/cu", {
+        const response = await fetch(`${API_BASE_URL}/api/users/cu`, {
           method: "GET",
           credentials: "include",
         });
@@ -141,7 +143,7 @@ export default function UserDashboard() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/posts", {
+      const response = await fetch(`${API_BASE_URL}/api/posts`, {
         method: "POST",
         credentials: "include",
         body: postPayload,
@@ -176,7 +178,7 @@ export default function UserDashboard() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/posts/${postId}`,
+        `${API_BASE_URL}/api/posts/${postId}`,
         {
           method: "DELETE",
           headers: {
@@ -232,7 +234,7 @@ export default function UserDashboard() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/posts/${editingPost.id}`,
+        `${API_BASE_URL}/api/posts/${editingPost.id}`,
         {
           method: "PUT",
           credentials: "include",
@@ -262,7 +264,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const cookieCheck = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -288,7 +290,7 @@ export default function UserDashboard() {
     const findMyPosts = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/posts/my-posts",
+          `${API_BASE_URL}/api/posts/my-posts`,
           {
             method: "GET",
             headers: {
@@ -317,7 +319,7 @@ export default function UserDashboard() {
         setIsLoadingProfile(true);
         try {
           const response = await fetch(
-            "http://localhost:5000/api/users/profile",
+            `${API_BASE_URL}/api/users/profile`,
             {
               method: "GET",
               headers: {
@@ -352,7 +354,7 @@ export default function UserDashboard() {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/logout", {
+      const response = await fetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -526,7 +528,7 @@ export default function UserDashboard() {
                         </span>
 
                         <Link
-                          href={`http://localhost:3000/posts/${post.id}`}
+                          href={`/posts/${post.id}`}
                           className="text-xs text-gray-500  "
                         >
                           <p className="text-blue-700 transition-all duration-75 hover:text-blue-700/80 ">
@@ -691,7 +693,7 @@ export default function UserDashboard() {
                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 border border-gray-300 flex items-center justify-center">
                           {me?.userImage ? (
                             <img
-                              src={`http://localhost:5000${me.userImage}`}
+                              src={apiUrl(me.userImage)}
                               alt={me.name}
                               className="w-full h-full object-cover"
                             />
@@ -780,7 +782,7 @@ export default function UserDashboard() {
                         }
 
                         const response = await fetch(
-                          "http://localhost:5000/api/users/profile",
+                          `${API_BASE_URL}/api/users/profile`,
                           {
                             method: "PUT",
                             credentials: "include",

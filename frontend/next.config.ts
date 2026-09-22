@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         port: "5000",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "qabas-nqg8.vercel.app",
+        pathname: "/uploads/**",
+      },
     ],
   },
 };
