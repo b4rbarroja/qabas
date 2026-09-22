@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "target": "ES2023",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ES2023",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "outDir": "./dist"
   },
-  "include": ["src/**/*", "prisma/**/*", "prisma7.config.ts", "generated/**/*"]
+  "include": ["src/**/*", "prisma/**/*"]
 }
-
