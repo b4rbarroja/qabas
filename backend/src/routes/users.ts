@@ -1,13 +1,18 @@
 import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
+import { adminMiddleware } from "../middlewares/adminMiddleware.js";
 import { type AuthRequest } from "../types/auth.js";
 import { isValidHttpUrl } from "../lib/url.js";
 
 const router = Router();
 
-// GET /api/users - جلب قائمة المستخدمين
-router.get("/", authMiddleWare, async (req: AuthRequest, res: Response) => {
+// GET /api/users - جلب قائمة المستخدمين (للأدمن فقط)
+router.get(
+  "/",
+  authMiddleWare,
+  adminMiddleware,
+  async (req: AuthRequest, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       select: {

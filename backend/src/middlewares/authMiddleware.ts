@@ -1,35 +1,51 @@
-import { type Response, type NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { type AuthRequest } from "../types/auth.js";
+import { type AuthRequest, type UserPayload } from "../types/auth.js";
+
+export function extractToken(req: Request): string | undefined {
+  const authHeader = req.headers.authorization;
+  if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
+    return authHeader.slice("Bearer ".length);
+  }
+  return req.cookies?.token;
+}
+
+export function getAuthenticatedUser(req: Request): UserPayload | null {
+  const token = extractToken(req);
+  if (!token) return null;
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("JWT_SECRET is not configured");
+    return null;
+  }
+  try {
+    return jwt.verify(token, secret) as UserPayload;
+  } catch {
+    return null;
+  }
+}
 
 const authMiddleWare = (
   req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers.authorization;
-  const bearerToken =
-    typeof authHeader === "string" && authHeader.startsWith("Bearer ")
-      ? authHeader.slice("Bearer ".length)
-      : undefined;
-  const token = bearerToken || req.cookies?.token;
+  const token = extractToken(req);
 
   if (!token) {
     return res.status(401).json({ error: "Access denied. Token missing." });
   }
 
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "fallback_secret",
-    ) as {
-      userId: string;
-      role: string;
-    };
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("JWT_SECRET is not configured");
+    return res.status(500).json({ error: "Server configuration error" });
+  }
 
-    req.user = decoded;
+  try {
+    req.user = jwt.verify(token, secret) as UserPayload;
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ error: "Invalid or expired token" });
   }
 };

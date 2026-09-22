@@ -1,6 +1,8 @@
 import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import authMiddleWare from "../middlewares/authMiddleware.js";
+import authMiddleWare, {
+  getAuthenticatedUser,
+} from "../middlewares/authMiddleware.js";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
 import { type AuthRequest } from "../types/auth.js";
 import { isValidHttpUrl } from "../lib/url.js";
@@ -84,11 +86,14 @@ router.post(
 
 router.get("/", async (req: AuthRequest, res: Response): Promise<any> => {
   try {
+    const requester = getAuthenticatedUser(req);
+    const isAdmin = requester?.role === "ADMIN";
+
     const posts = await prisma.post.findMany({
       where: {
-        status: {
-          in: ["PENDING", "APPROVED"],
-        },
+        status: isAdmin
+          ? { in: ["PENDING", "APPROVED", "REJECTED"] }
+          : "APPROVED",
       },
       orderBy: {
         createdAt: "desc",
@@ -175,6 +180,20 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
     if (!post) {
       return res.status(404).json({ error: "المقال غير موجود" });
     }
+
+    if (post.status !== "APPROVED") {
+      const requester = getAuthenticatedUser(req);
+      if (!requester) {
+        return res.status(401).json({ error: "غير مصرح لك بعرض هذا المقال" });
+      }
+      if (
+        post.authorId !== requester.userId &&
+        requester.role !== "ADMIN"
+      ) {
+        return res.status(403).json({ error: "غير مصرح لك بعرض هذا المقال" });
+      }
+    }
+
     return res.status(200).json(post);
   } catch (error) {
     console.error("Error fetching post:", error);
@@ -262,6 +281,54 @@ router.put(
       return res
         .status(500)
         .json({ error: "حدث خطأ في السيرفر أثناء تعديل المقال" });
+    }
+  },
+);
+
+// 5. قبول/رفض مقال (PATCH /:id/status) - للأدمن فقط
+router.patch(
+  "/:id/status",
+  authMiddleWare,
+  adminMiddleware,
+  async (req: AuthRequest, res: Response): Promise<any> => {
+    try {
+      const id = req.params.id as string;
+      const { status } = req.body;
+
+      if (status !== "APPROVED" && status !== "REJECTED") {
+        return res.status(400).json({ error: "الحالة غير صالحة" });
+      }
+
+      const existingPost = await prisma.post.findUnique({
+        where: { id },
+      });
+
+      if (!existingPost) {
+        return res.status(404).json({ error: "المقال غير موجود" });
+      }
+
+      const updatedPost = await prisma.post.update({
+        where: { id },
+        data: { status },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              specialization: true,
+              bio: true,
+              userImage: true,
+            },
+          },
+        },
+      });
+
+      return res.status(200).json(updatedPost);
+    } catch (error) {
+      console.error("Error updating post status:", error);
+      return res
+        .status(500)
+        .json({ error: "حدث خطأ في السيرفر أثناء تحديث حالة المقال" });
     }
   },
 );

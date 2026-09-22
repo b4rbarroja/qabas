@@ -95,6 +95,8 @@ export default function PostPage({ params }: PostPageProps) {
           setReportSubmitted(false);
           setReportReason("");
         }, 3000);
+      } else if (res.status === 401) {
+        alert("يجب تسجيل الدخول للإبلاغ عن المقال.");
       } else {
         alert("حدث خطأ أثناء إرسال البلاغ.");
       }

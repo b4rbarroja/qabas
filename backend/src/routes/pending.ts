@@ -1,7 +1,8 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import { type AuthRequest } from "../types/auth.js";
 
 const router = Router();
 
@@ -9,7 +10,7 @@ router.get(
   "/",
   authMiddleWare,
   adminMiddleware,
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const pendingPosts = await prisma.post.findMany({
         where: {

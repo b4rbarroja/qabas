@@ -1,21 +1,29 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import authMiddleWare from "../middlewares/authMiddleware.js";
+import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import { type AuthRequest } from "../types/auth.js";
 import discordSender from "../services/discord.js";
 
 const router = Router();
 
-router.get("/", authMiddleWare, async (req: Request, res: Response) => {
-  try {
-    const messages = await prisma.message.findMany();
-    res.status(200).json(messages);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: `Failed to fetch messages: ${error}` });
-  }
-});
+// قراءة رسائل التواصل - للأدمن فقط
+router.get(
+  "/",
+  authMiddleWare,
+  adminMiddleware,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const messages = await prisma.message.findMany();
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: `Failed to fetch messages: ${error}` });
+    }
+  },
+);
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: AuthRequest, res: Response) => {
   try {
     const { name, email, subject, message } = req.body;
 
