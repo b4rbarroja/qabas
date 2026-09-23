@@ -27,6 +27,7 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import MarkdownEditor from "@/app/components/main/editor/MarkdownEditor";
 
 export default function UserDashboard() {
   interface User {
@@ -626,15 +627,15 @@ export default function UserDashboard() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       محتوى المقال <span className="text-red-500">*</span>
                     </label>
-                    <textarea
+                    <MarkdownEditor
                       rows={8}
                       name="content"
                       value={formData.content}
-                      onChange={handleChange}
+                      onChange={(v) =>
+                        setFormData((prev) => ({ ...prev, content: v }))
+                      }
                       required
-                      placeholder="اكتب نص المقال هنا..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 resize-none"
-                    ></textarea>
+                    />
                   </div>
 
                   <button
@@ -981,18 +982,17 @@ export default function UserDashboard() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   محتوى المقال <span className="text-red-500">*</span>
                 </label>
-                <textarea
+                <MarkdownEditor
                   rows={6}
                   value={editFormData.content}
-                  onChange={(e) =>
+                  onChange={(v) =>
                     setEditFormData({
                       ...editFormData,
-                      content: e.target.value,
+                      content: v,
                     })
                   }
                   required
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 resize-none"
-                ></textarea>
+                />
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
