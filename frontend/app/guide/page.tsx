@@ -120,20 +120,6 @@ export default function GuidePage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="px-4 py-12 md:px-6 md:py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8 max-w-2xl md:mb-10">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl md:text-4xl">
-              لماذا قبس؟
-            </h2>
-            <p className="mt-3 text-base leading-8 text-dark/60">
-              مزايا صُمّمت لتجعل الكتابة والقراءة أسهل مما تتخيل.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Steps */}
       <section id="steps" className="px-4 pb-12 md:px-6 md:pb-16">
         <div className="mx-auto max-w-6xl">
