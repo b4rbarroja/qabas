@@ -168,27 +168,6 @@ export default function GuidePage() {
               );
             })}
           </div>
-
-          {/* Markdown sample */}
-          <div className="mt-8 rounded-2xl border border-primary/10 bg-primary/5 p-6 sm:p-8">
-            <div className="mb-4 flex items-center gap-2.5">
-              <Sparkles className="h-5 w-5 text-accent" />
-              <h3 className="text-lg font-bold text-primary sm:text-xl">
-                كيف يبدو نص Markdown؟
-              </h3>
-            </div>
-            <p className="mb-4 text-sm leading-7 text-dark/60 sm:text-base">
-              هذا مثال صغير على الصيغة التي ستطلبها من أداة الذكاء الاصطناعي.
-              لاحظ أن العناوين تبدأ بـ ‎#‎، والغامق بين ‎**‎، والقوائم بشرطة ‎-‎
-              — والمنصة تحوّلها تلقائياً إلى شكل جميل عند العرض:
-            </p>
-            <pre
-              dir="ltr"
-              className="overflow-x-auto rounded-2xl border border-primary/10 bg-[#0d1117] p-5 text-left text-sm leading-7 text-[#e6edf3]"
-            >
-              <code>{MARKDOWN_SAMPLE}</code>
-            </pre>
-          </div>
         </div>
       </section>
 
