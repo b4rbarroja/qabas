@@ -93,7 +93,7 @@ router.get("/", async (req: AuthRequest, res: Response): Promise<any> => {
       where: {
         status: isAdmin
           ? { in: ["PENDING", "APPROVED", "REJECTED"] }
-          : "APPROVED",
+          : { in: ["PENDING", "APPROVED"] },
       },
       orderBy: {
         createdAt: "desc",
@@ -181,7 +181,9 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: "المقال غير موجود" });
     }
 
-    if (post.status !== "APPROVED") {
+    // المقالات المنشورة (PENDING / APPROVED) متاحة للجميع فوراً؛
+    // REJECTED مخفية إلا للكاتب أو الأدمن
+    if (post.status === "REJECTED") {
       const requester = getAuthenticatedUser(req);
       if (!requester) {
         return res.status(401).json({ error: "غير مصرح لك بعرض هذا المقال" });
@@ -285,7 +287,7 @@ router.put(
   },
 );
 
-// 5. قبول/رفض مقال (PATCH /:id/status) - للأدمن فقط
+// 5. تغيير وسم التحقق (PENDING/APPROVED) أو الإخفاء (REJECTED) - للأدمن فقط
 router.patch(
   "/:id/status",
   authMiddleWare,
@@ -295,7 +297,11 @@ router.patch(
       const id = req.params.id as string;
       const { status } = req.body;
 
-      if (status !== "APPROVED" && status !== "REJECTED") {
+      if (
+        status !== "PENDING" &&
+        status !== "APPROVED" &&
+        status !== "REJECTED"
+      ) {
         return res.status(400).json({ error: "الحالة غير صالحة" });
       }
 

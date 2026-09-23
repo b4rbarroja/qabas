@@ -182,12 +182,16 @@ export default function PostPage({ params }: PostPageProps) {
               {new Date(post.createdAt).toLocaleDateString("ar-EG")}
             </span>
             {post.status === "PENDING" ? (
-              <span className="text-xs font-bold text-red-700 sm:text-sm">
-                قيد المراجعة
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700 sm:text-sm">
+                قيد التحقق
               </span>
             ) : post.status === "APPROVED" ? (
-              <span className="text-xs font-bold text-green-600 sm:text-sm">
-                تمت مراجعته
+              <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-700 sm:text-sm">
+                موثّق
+              </span>
+            ) : post.status === "REJECTED" ? (
+              <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700 sm:text-sm">
+                مرفوض
               </span>
             ) : null}
             <span className="text-primary/30">•</span>

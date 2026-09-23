@@ -240,7 +240,7 @@ export default function AdminDashboard() {
 
   // دالة رفض المقال
   const handleRejectPost = async (postId: string | number) => {
-    if (!window.confirm("هل أنت تأكد من رغبتك في رفض هذا المقال؟")) {
+    if (!window.confirm("هل تريد رفض هذا المقال؟ سيختفي عن الزوار حتى تعيد قبوله.")) {
       return;
     }
 
@@ -438,7 +438,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center gap-2.5">
               <Clock size={18} />
-              <span>المنشورات المعلقة</span>
+              <span>بانتظار التوثيق</span>
             </div>
             {pendingArticles.length > 0 && (
               <span
@@ -537,14 +537,15 @@ export default function AdminDashboard() {
               <div className="flex justify-between items-center mb-6 border-b border-[#e8e6de] pb-4">
                 <div>
                   <h2 className="text-xl font-bold text-[#111111]">
-                    المنشورات المعلقة للمراجعة
+                    تغيير وسوم التوثيق
                   </h2>
                   <p className="text-sm text-[#666666] mt-0.5">
-                    المقالات التي تنتظر مراجعتك للموافقة على نشرها للعموم
+                    مقالات منشورة مباشرة أمام الزوار — غيّر وسمها من «قيد
+                    التحقق» إلى «موثّق»
                   </p>
                 </div>
                 <span className="text-xs font-semibold text-[#333333] bg-[#f0eee6] border border-[#e0ded6] px-3 py-1.5 rounded-full">
-                  {pendingArticles.length} تنتظر القرار
+                  {pendingArticles.length} بانتظار التوثيق
                 </span>
               </div>
 
@@ -560,7 +561,7 @@ export default function AdminDashboard() {
                     size={40}
                     className="mx-auto mb-3 stroke-1 text-emerald-600"
                   />
-                  <p className="font-medium">لا توجد مقالات معلقة حالياً.</p>
+                  <p className="font-medium">لا توجد مقالات بانتظار التوثيق.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -611,7 +612,7 @@ export default function AdminDashboard() {
                             onClick={() => handleApprovePost(article.id)}
                             className="flex items-center gap-1.5 bg-[#111111] hover:bg-[#333333] text-white px-3.5 py-2 rounded-lg text-xs font-medium transition-all shadow-xs cursor-pointer"
                           >
-                            <Check size={15} /> قبول
+                            <Check size={15} /> توثيق
                           </button>
                           <button
                             onClick={() => handleRejectPost(article.id)}
