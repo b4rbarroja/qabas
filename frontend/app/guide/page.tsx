@@ -121,7 +121,7 @@ export default function GuidePage() {
       </section>
 
       {/* Steps */}
-      <section id="steps" className="px-4 pb-12 md:px-6 md:pb-16">
+      <section id="steps" className="px-4 mt-12 pb-12 md:px-6 md:pb-16">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 max-w-2xl md:mb-10">
             <h2 className="text-2xl font-bold text-primary sm:text-3xl md:text-4xl">
